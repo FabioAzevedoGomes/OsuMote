@@ -48,7 +48,7 @@ int main(void)
 						orientation = wiimotes[0]->orient;
 						
 						printf("\n[Acceleration]\n X: %.2f\n Y: %.2f\n Z: %.2f\n",gravforce.x,gravforce.y,gravforce.z);
-						printf("\n[Orientation]\n Roll: %.2f\n Pitch: %.2f",orientation.roll,orientation.pitch);
+						printf("\n[Orientation]\n Roll: %.2f\n Pitch: %.2f\n",orientation.roll,orientation.pitch);
 					
 						if (IS_HELD(wiimotes[0],WIIMOTE_BUTTON_A))
 						{
