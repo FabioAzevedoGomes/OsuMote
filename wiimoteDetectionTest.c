@@ -1,10 +1,17 @@
 #include <stdio.h>
 #include <wiiuse.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define MAX_WIIMOTES 1
 #define DELTA_GRAV 1.5
 #define ACCEL_THRESHOLD 2
+#define NOISE_PASS 0.5
+
+
+enum moves {LEFT, RIGHT, DOWN, NOTHING};
+enum moves detected_last = NOTHING;
+
 
 // Connect wiimote
 int connect_wiimotes(wiimote** wiimotes)
@@ -22,32 +29,34 @@ void simple_detect_movement(struct gforce_t last_grav, struct orient_t last_orie
 
     int sm = 0;
 
-    if (delta_x > DELTA_GRAV)
+    if (abs(grav.x) > NOISE_PASS)
     {
-        printf("LEFT! ");
-        sm = 1;
+        if (delta_x > DELTA_GRAV && detected_last != RIGHT )
+        {
+            printf("LEFT! ");
+            detected_last = LEFT;
+            sm = 1;
+        }
+        else if (delta_x < -DELTA_GRAV && detected_last != LEFT)
+        {
+            printf("RIGHT! ");
+            detected_last = RIGHT;
+            sm = 1;
+        }
     }
-    else if (delta_x < -DELTA_GRAV)
+    if (abs(grav.z) > NOISE_PASS && delta_z < - DELTA_GRAV)
     {
-        printf("RIGHT! ");
-        sm = 1;
-    }
-
-    if (delta_z > DELTA_GRAV)
-    {
-        printf("UP! ");
-        sm = 1;
-    }
-    else if (delta_z < -DELTA_GRAV)
-    {
-        printf("DOWN! ");
-        sm = 1;
+            printf("DOWN! ");
+            detected_last = DOWN;
+            sm = 1;
     }
 
     if (sm) 
-    {
         printf("\n");
-    }
+    else
+        detected_last = NOTHING;
+    
+    
 }
 
 int main(void)
@@ -58,7 +67,7 @@ int main(void)
     struct orient_t last_orient;
 
     // Initialize readings with zeros
-    last_grav = (struct gforce_t){ .x=0, .y=0, .z=0};
+    last_grav = (struct gforce_t){ .x=0, .y=0, .z=1};
     last_orient = (struct orient_t){.a_roll=0, .a_pitch =0, .roll=0, .pitch=0, .yaw=0};
 
     wiimote** wiimotes = wiiuse_init(MAX_WIIMOTES);
@@ -67,7 +76,7 @@ int main(void)
     {
         wiiuse_motion_sensing(wiimotes[0], 1);
 		wiiuse_set_leds(wiimotes[0],WIIMOTE_LED_1);
-        wiiuse_set_accel_threshold(wiimotes[0],ACCEL_THRESHOLD);
+        //wiiuse_set_accel_threshold(wiimotes[0],ACCEL_THRESHOLD);
 
         // Main loop
 		int exit = 1;
@@ -82,7 +91,7 @@ int main(void)
 					case WIIUSE_EVENT:
                         // Look for significant movement 
                         simple_detect_movement(last_grav, last_orient,wiimotes[0]->gforce,wiimotes[0]->orient);
-	
+                        
                         // Update last event readings
                         last_grav = wiimotes[0]->gforce;
 						last_orient  = wiimotes[0]->orient;
