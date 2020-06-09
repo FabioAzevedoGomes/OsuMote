@@ -1,0 +1,4 @@
+g++ -Wall -fPIC -I./wiic -c controllermanager.cpp
+ 
+g++ -shared controllermanager.o -lwiicpp -lX11 -lXtst -o libcontrollermanager.so
+

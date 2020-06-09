@@ -1,0 +1,4 @@
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Release/TRAB_IHC.exe
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/obj/x86/Release/TRAB_IHC.csproj.CoreCompileInputs.cache
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/obj/x86/Release/TRAB_IHC.exe
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/obj/x86/Release/TRAB_IHC.csprojAssemblyReference.cache

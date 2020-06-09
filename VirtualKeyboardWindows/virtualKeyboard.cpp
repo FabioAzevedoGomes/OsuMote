@@ -1,4 +1,4 @@
-#include "virtualKeyboardConstants.h"
+#include "virtualKeyboard.h"
 
 INPUT createGenericKeyboard(INPUT keyboard) {
     // Set up a generic keyboard event.
@@ -21,7 +21,13 @@ void releaseKey(INPUT keyboard) {
     SendInput(1, &keyboard, sizeof(INPUT));
 }
 
-void keystroke(INPUT keyboard, int key) {
+void extern keystroke(int key) {
+    
+    // Create virtual keyboard
+    INPUT keyboard;
+    keyboard = createGenericKeyboard(keyboard);
+    
+    // Press the desired key
     pressKey(keyboard, key);
     releaseKey(keyboard);
 }

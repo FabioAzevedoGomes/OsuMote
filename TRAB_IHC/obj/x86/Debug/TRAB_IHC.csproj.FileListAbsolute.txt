@@ -1,0 +1,5 @@
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Debug/TRAB_IHC.exe
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Debug/TRAB_IHC.pdb
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/obj/x86/Debug/TRAB_IHC.csproj.CoreCompileInputs.cache
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/obj/x86/Debug/TRAB_IHC.exe
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/obj/x86/Debug/TRAB_IHC.pdb

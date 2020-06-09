@@ -1,0 +1,17 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TRAB_IHC", "TRAB_IHC\TRAB_IHC.csproj", "{7FA35426-E2F6-4C37-BF93-7A2FBE0DBA86}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7FA35426-E2F6-4C37-BF93-7A2FBE0DBA86}.Debug|x86.ActiveCfg = Debug|x86
+		{7FA35426-E2F6-4C37-BF93-7A2FBE0DBA86}.Debug|x86.Build.0 = Debug|x86
+		{7FA35426-E2F6-4C37-BF93-7A2FBE0DBA86}.Release|x86.ActiveCfg = Release|x86
+		{7FA35426-E2F6-4C37-BF93-7A2FBE0DBA86}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+EndGlobal
