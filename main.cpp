@@ -1,12 +1,46 @@
 #include <gtkmm.h>
 #include <thread>
+#include <windows.h>
 #include "osumote.h"
 #include "controllermanager.h"
+#include "include/virtualKeyboardManager"
+
+/*
+virtual Keyboard example
+
+	int virtualKeyboardExampel()
+	{
+		// This structure will be used to create the keyboard
+		// input event.
+		INPUT ip{};
+
+		// Create the generic keyboard to use as our virtual keyboard
+		ip = createGenericKeyboard(ip);
+
+		// call the letters D,F,J and K
+		keystroke(ip, KEYBOARD_D);
+		keystroke(ip, KEYBOARD_F);
+		keystroke(ip, KEYBOARD_J);
+		keystroke(ip, KEYBOARD_K);
+
+
+		// you can use Slepp function to delay the callback
+		Sleep(5000); // 5 seconds
+		// and then call the keystroke
+		keystroke(ip, KEYBOARD_K);
+		// Exit normally
+		return 0;
+	}
+
+*/
 
 using namespace std;
 
 int main(int argc, char **argv)
 {
+	INPUT ip{};
+	Sleep(5000);
+	keystroke(ip, KEYBOARD_D);
 
 	// Initialize wiiuse library
 	CWii wii;
