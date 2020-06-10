@@ -235,4 +235,10 @@ public partial class MainWindow : Gtk.Window
         /* Let user choose sound for drum side hit*/
         // TODO
     }
+
+    protected void OnControlsActionActivated(object sender, EventArgs e)
+    {
+
+    }
+
 }

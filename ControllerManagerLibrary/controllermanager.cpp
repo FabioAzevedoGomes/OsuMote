@@ -161,6 +161,53 @@ namespace ControllerManager
         }
     }
 
+    // Handle button presses if there are any
+    void HandleButtons(CWiimote &wm)
+    {
+    
+        int keycode;
+    
+        // If plus button is pressed, pause the game  (ESC)
+        if (wm.Buttons.isJustPressed(CButtons::BUTTON_PLUS))
+        {
+            keycode = XKeysymToKeycode(display, XK_Escape);
+            XTestFakeKeyEvent(display, keycode, 1, 0);
+            XTestFakeKeyEvent(display, keycode, 0, 0);
+            XFlush(display);
+        }
+        if(wm.Buttons.isJustPressed(CButtons::BUTTON_UP))
+        {
+            keycode = XKeysymToKeycode(display, XK_Up);
+            XTestFakeKeyEvent(display, keycode, 1, 0);
+            XTestFakeKeyEvent(display, keycode, 0, 0);
+            XFlush(display);
+        }
+
+        if(wm.Buttons.isJustPressed(CButtons::BUTTON_DOWN))
+        {
+            keycode = XKeysymToKeycode(display, XK_Down);
+            XTestFakeKeyEvent(display, keycode, 1, 0);
+            XTestFakeKeyEvent(display, keycode, 0, 0);
+            XFlush(display);
+        }
+
+        if(wm.Buttons.isJustPressed(CButtons::BUTTON_LEFT))
+        {
+            keycode = XKeysymToKeycode(display, XK_Left);
+            XTestFakeKeyEvent(display, keycode, 1, 0);
+            XTestFakeKeyEvent(display, keycode, 0, 0);
+            XFlush(display);
+        }
+
+        if(wm.Buttons.isJustPressed(CButtons::BUTTON_RIGHT))
+        {
+            keycode = XKeysymToKeycode(display, XK_Right);
+            XTestFakeKeyEvent(display, keycode, 1, 0);
+            XTestFakeKeyEvent(display, keycode, 0, 0);
+            XFlush(display);
+        } 
+    }
+
     // Handle a sensor update
     void HandleEvent(CWiimote &wm)
     {
@@ -305,6 +352,8 @@ namespace ControllerManager
 				    switch(wiimote.GetEvent())
 				    {
 					    case CWiimote::EVENT_EVENT:
+					        // Handle button inputs from the user (Dpad and +)
+					        HandleButtons(wiimote);
 						    // Handle that event			
 						    HandleEvent(wiimote);
 						    break;

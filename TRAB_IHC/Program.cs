@@ -10,7 +10,7 @@ namespace TRAB_IHC
         [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void init();
         [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void controller_manager();
         [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void set_connected_wiimotes(int n);
-
+        
         public static void Main(string[] args)
         {
             // Initialize the wiiC library wrapper

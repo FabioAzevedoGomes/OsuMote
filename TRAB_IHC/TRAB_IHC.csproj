@@ -64,6 +64,8 @@
     <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Window.cs" />
+    <Compile Include="gtk-gui\TRAB_IHC.Window.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\Debug\libcontrollermanager.so" />
