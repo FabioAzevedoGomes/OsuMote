@@ -67,56 +67,91 @@ public partial class MainWindow : Gtk.Window
     protected void CalibrateHandler(object sender, EventArgs e)
     {
         /* Calibrate the thresholds to user's movements */
-        MessageDialog first_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
-            "Move 1 - Down");
-        first_md.Run();
-        first_md.Destroy();
 
-        MessageDialog m1first_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
-    "Move 1 - Time 1");
-        m1first_md.Run();
-        m1first_md.Destroy();
+        // Image with instructions on how to execute the downward movement
+        Gtk.Image down_mvmnt_img = new Gtk.Image("./Resources/wiimoteDownMovement.png"); // 200 x 150
+        Gtk.Image side_mvmnt_img = new Gtk.Image("./Resources/wiimoteLeftMovement.png"); // 200 x 150
 
+
+        // Calibrate downward movement
+
+        // Show message with instructions for first move
+        MessageDialog downfirst_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.OkCancel,
+            "Calibration for down movements will now begin, please press OK and make the movement shown in the image")
+        {
+            Image = down_mvmnt_img
+        };
+        downfirst_md.ShowAll();
+        downfirst_md.Run();
+        downfirst_md.Destroy();
+
+        // Record user movements after OK is pressed
         calibrate_force(0, 0);
 
-        MessageDialog m1second_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
-    "Move 1 - Time 2");
-        m1second_md.Run();
-        m1second_md.Destroy();
+        // Show message with instructions for second move
+        MessageDialog downsecond_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
+            "Very good, now a second time")
+        {
+            Image = down_mvmnt_img
+        };
+        downsecond_md.ShowAll();
+        downsecond_md.Run();
+        downsecond_md.Destroy();
 
+        // Record user movements after OK is pressed 
         calibrate_force(0, 1);
 
-        MessageDialog m1third_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
-    "Move 1 - Time 3");
-        m1third_md.Run();
-        m1third_md.Destroy();
+        // Show message with instructions for third move
+        MessageDialog downthird_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
+            "And lastly a third time")
+        {
+            Image = down_mvmnt_img
+        };
+        downthird_md.ShowAll();
+        downthird_md.Run();
+        downthird_md.Destroy();
 
+        // Record user movements after OK is pressed
         calibrate_force(0, 2);
 
-        MessageDialog second_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
-            "Move 2 - Left");
-        second_md.Run();
-        second_md.Destroy();
 
-        MessageDialog m2first_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
-    "Move 2 - Time 1");
-        m2first_md.Run();
-        m2first_md.Destroy();
+        // Calibrate sideways movement
 
+        // Show message with instructions for the first move
+        MessageDialog sidefirst_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
+            "Calibration for sideways movements will now begin, please press OK and and make the movement shown in the image")
+        {
+            Image = side_mvmnt_img
+        };
+        sidefirst_md.ShowAll();
+        sidefirst_md.Run();
+        sidefirst_md.Destroy();
+
+        // Record user movements after OK is pressed
         calibrate_force(1, 0);
 
-        MessageDialog m2second_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
-    "Move 2 - Time 2");
-        m2second_md.Run();
-        m2second_md.Destroy();
+        MessageDialog sidesecond_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
+         "Very good, now a second time")
+        {
+            Image = side_mvmnt_img
+        };
+        sidesecond_md.ShowAll();
+        sidesecond_md.Run();
+        sidesecond_md.Destroy();
 
+        // Record user movements affter OK is pressed
         calibrate_force(1, 1);
 
-        MessageDialog m2third_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
-    "Move 2 - Time 3");
-        m2third_md.Run();
-        m2third_md.Destroy();
+        MessageDialog sidethird_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
+         "And lastly a third time")
+        {
+            Image = side_mvmnt_img
+        };
+        sidethird_md.ShowAll();
+        sidethird_md.Run();
+        sidethird_md.Destroy();
 
+        // Record user movements after OK is pressed
         calibrate_force(1, 2);
 
     }

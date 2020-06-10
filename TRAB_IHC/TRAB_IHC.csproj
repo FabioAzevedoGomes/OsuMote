@@ -68,6 +68,7 @@
   <ItemGroup>
     <None Include="bin\Debug\libcontrollermanager.so" />
     <None Include="bin\Debug\libwiicpp.so" />
+    <None Include="Resources\wiimoteDownMovement.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

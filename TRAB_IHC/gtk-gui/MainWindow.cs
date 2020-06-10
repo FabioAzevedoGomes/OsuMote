@@ -141,6 +141,7 @@ public partial class MainWindow
 		this.GtkAlignment.LeftPadding = ((uint)(12));
 		// Container child GtkAlignment.Gtk.Container+ContainerChild
 		this.vbox1 = new global::Gtk.VBox();
+		this.vbox1.Name = "vbox1";
 		this.vbox1.Homogeneous = true;
 		this.vbox1.Spacing = 6;
 		this.vbox1.BorderWidth = ((uint)(2));
