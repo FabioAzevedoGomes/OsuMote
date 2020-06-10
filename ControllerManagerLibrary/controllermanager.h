@@ -7,8 +7,9 @@ namespace ControllerManager{
 
     // Constants
     #define MAX_RECORDINGS 12
-    #define ANGLE_RATE_THRESHOLD_DOWN 900 // Angle rate limit for pitch to be detected as down
-    #define ANGLE_RATE_THRESHOLD_SIDES 500 // Angle rate limit for yaw to be detected as sides
+    #define MAX_CALIBRATION_RECORDINGS 128
+    //#define ANGLE_RATE_THRESHOLD_DOWN 900 // Angle rate limit for pitch to be detected as down
+    //#define ANGLE_RATE_THRESHOLD_SIDES 500 // Angle rate limit for yaw to be detected as sides
     // Error codes and signals
     #define ERROR_BLUETOOTH_OFF -1
     #define ERROR_NO_WIIMOTES -2
@@ -52,4 +53,13 @@ namespace ControllerManager{
     *   Main loop for the controller manager, should be spawned in a separate thread at the start of the application
     */
     extern "C" void controller_manager();
+
+
+    /*
+    *   Records the user's movements 3 times, and sets the average
+    *   max angle change rate detected as the threshold for that axis
+    *   Axis 0 => DOWN
+    *   Axis 1 => SIDES
+    */
+    extern "C" void calibrate_force(int axis, int turn);
 }

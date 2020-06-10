@@ -10,6 +10,14 @@ namespace ControllerManager
     static directions last_read, last_direction; // Last detected reading and actual last detected direction, Difference is last_direction won't be NONE
     static Display* display;
 
+    static double angle_rate_threshold_down  = 900; // Angle rate limit for pitch to be detected as down
+    static double angle_rate_threshold_sides = 500; // Angle rate limit for yaw to be detected as sides
+    static double calibration_angles[MAX_CALIBRATION_RECORDINGS][3];
+    static int    calibration_index = 0; // Position in the calibration array 
+    static int    calibration_turn  = 0; // Turn of calibration (0 1 or 2)
+    static int    calibration_axis  = 0; // Axis currently being calibrated (0 is down, 1/2 is sides)
+    static int    calibrating      = 0; // Flag if calibration is currently ongoing
+
     // ===================================================================================
     // Non-exposed functions
     // ===================================================================================
@@ -18,13 +26,13 @@ namespace ControllerManager
     {
         position_index = n;
     }
-
-    void max_rates(double* result, double recorded_rates[MAX_RECORDINGS][3])
+    //                             double recorded_rates[MAX_RECORDINGS][3]
+    void max_rates(double* result, double recorded_rates[][3], int size)
     {
 	    for (int i=0; i < 3; i ++)
 	    {
 		    double max = 0;
-		    for (int j=0;j<MAX_RECORDINGS;j++)
+		    for (int j=0;j<size;j++)
 		    {
 			    if (abs(recorded_rates[j][i]) > abs(max) )
 			    {
@@ -81,6 +89,7 @@ namespace ControllerManager
 	            case RIGHT:
 		            std::cout << "Movement was: RIGHT" << std::endl;
 		            keycode = XKeysymToKeycode(display, XK_K);
+		            break;
 		        case UP:
 		            keycode = XKeysymToKeycode(display, XK_Escape);
 		            break;
@@ -109,19 +118,19 @@ namespace ControllerManager
 
 	    double solution[3];
 	    // Get the max rates for all 3 axis
-	    max_rates(solution, recorded_rates);
+	    max_rates(solution, recorded_rates, MAX_RECORDINGS);
         
         int significantMovement = 0; // Flag if there was a significant move detected
         
 	    // If pitch change was greater than yaw change in the last MAX_RECORDINGS readings
 	    // and greater than the threshold
-        if (abs(solution[0]) > abs(solution[2]) && solution[0] > ANGLE_RATE_THRESHOLD_DOWN)
+        if (abs(solution[0]) > abs(solution[2]) && solution[0] > angle_rate_threshold_down)
         {
             last_read = DOWN;
             significantMovement = 1;
         }
 	    // Else if yaw change was greater than the treshold
-	    else if (abs(solution[2]) > ANGLE_RATE_THRESHOLD_SIDES)
+	    else if (abs(solution[2]) > angle_rate_threshold_sides)
         {
             if (solution[2] > 0 && last_read != RIGHT)
             {
@@ -155,10 +164,27 @@ namespace ControllerManager
     // Handle a sensor update
     void HandleEvent(CWiimote &wm)
     {
+
 	    // Get pitch roll and yaw rates
         float pitch_rate,roll_rate,yaw_rate;
         wm.ExpansionDevice.MotionPlus.Gyroscope.GetRates(roll_rate,pitch_rate,yaw_rate);
-
+        
+        if (calibrating && calibration_index < MAX_CALIBRATION_RECORDINGS)
+        {
+            switch (calibration_axis){
+                
+                case 0:
+                    calibration_angles[calibration_index][calibration_turn] = pitch_rate;
+                    break;
+                case 1:
+                case 2:
+                    calibration_angles[calibration_index][calibration_turn] = yaw_rate;
+                default:
+                    break;
+            }
+            calibration_index++;
+        }
+        
 	    // Detect movement
 	    detect_movement(wm.Buttons.isHeld(CButtons::BUTTON_B));
 
@@ -304,6 +330,57 @@ namespace ControllerManager
         // Disconnect from X
         XCloseDisplay(display);
 
+        // return
+    }
+    
+    extern "C" void calibrate_force(int axis, int turn)
+    {
+        /*  
+        static int angle_rate_threshold_down  = 900; // Angle rate limit for pitch to be detected as down
+        static int angle_rate_threshold_sides = 500; // Angle rate limit for yaw to be detected as sides
+
+        static int calibration_angles[MAX_CALIBRATION_RECORDINGS][3];
+        */
+        if (turn == 0) // If it's the first step, clear the recording array
+        {
+            for (int i = 0 ; i < MAX_CALIBRATION_RECORDINGS; i++)
+            {
+                calibration_angles[i][0] = 0.0;
+                calibration_angles[i][1] = 0.0;
+                calibration_angles[i][2] = 0.0;
+            }
+        }
+        
+        /* Tell controller manager to record the rates */
+        calibration_index = 0;
+        calibration_turn = turn;
+        calibration_axis = axis;
+        calibrating = 1;
+        
+        // Wait until all rates are recorded
+        while(calibration_index < MAX_CALIBRATION_RECORDINGS) { }
+        
+        calibrating = 0;
+        
+        if (turn == 1) // If it's the last step, calculate average max
+        {
+            double result[3];
+            // Get max for each of the 3 recordings
+            max_rates(result, calibration_angles, MAX_CALIBRATION_RECORDINGS);
+            
+            // Average these max values
+            //             recording 0   recording 1  recording 2 
+            double average = (result[0] + result[1] + result[2])/3;
+            
+            if (axis == 0) // If down axis
+            {
+                angle_rate_threshold_down = average;            
+            }
+            else // If side axis
+            {
+                angle_rate_threshold_sides = average;
+            }
+        }
         // return
     }
 }
