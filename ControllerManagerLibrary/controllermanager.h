@@ -32,6 +32,15 @@ namespace ControllerManager{
     */
     extern "C" int connect_wiimotes();
 
+
+    /*
+    *   Disconnects the user's wiimote
+    *   Returns:
+    *    Positive or Negative => Error disconnecting wiimotes
+    *    0                    => Wiimote disconnected sucessfuly
+    */
+    extern "C" int disconnect_wiimotes();
+    
     /* 
     *   Enable motion sensing on wiimote
     *   Returns:

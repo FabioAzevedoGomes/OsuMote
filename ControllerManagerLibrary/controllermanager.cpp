@@ -35,11 +35,6 @@ namespace ControllerManager
 	    }
     }
 
-    void HandleDisconnect(CWiimote &wm) 
-    {
-        connected_wiimotes--;
-    }
-
     // Simulates a key press based on the direction and if a double input must be sent
     void SendToGame(directions direction, int double_input)
     {
@@ -86,6 +81,10 @@ namespace ControllerManager
 	            case RIGHT:
 		            std::cout << "Movement was: RIGHT" << std::endl;
 		            keycode = XKeysymToKeycode(display, XK_K);
+		        case UP:
+		            keycode = XKeysymToKeycode(display, XK_Escape);
+		            break;
+		        default:
 		            break;
             }
         }
@@ -97,6 +96,11 @@ namespace ControllerManager
         // Send
         XFlush(display);
         
+    }
+
+    void HandleDisconnect(CWiimote &wm) 
+    {   // Pause game on controller disconnect
+        SendToGame(UP, 0);
     }
 
     // Detect direction of movement
@@ -213,6 +217,16 @@ namespace ControllerManager
         }
     }
 
+    extern "C" int disconnect_wiimotes()
+    {
+        // First we tell user to hold power button, then call this function
+    
+        std::vector<CWiimote>& wiimotes = wii.GetWiimotes();
+        
+        return wiimotes.size();
+        
+    }
+
     extern "C" int enable_motion_sensing()
     {
         int index = 0;
@@ -234,6 +248,9 @@ namespace ControllerManager
 
     extern "C" void controller_manager()
     {
+    
+        int reload_wiimotes = 0;
+    
         // Wait for first wiimote connection
 	    while(connected_wiimotes <= 0 && (connected_wiimotes != EXIT_SIGNAL)){}
 
@@ -245,6 +262,13 @@ namespace ControllerManager
         int exit = 0;
         while (!exit && connected_wiimotes != EXIT_SIGNAL)
         {   
+            
+            if (reload_wiimotes)
+            {
+                wiimotes = wii.GetWiimotes();
+                reload_wiimotes = 0;
+            }
+            
 		    // Poll the Wiimotes for updates
 		    if ( wii.Poll() )
 		    {
@@ -259,12 +283,13 @@ namespace ControllerManager
 						    HandleEvent(wiimote);
 						    break;
 					    case CWiimote::EVENT_DISCONNECT:
-						    // Power button pressed
-						    HandleDisconnect(wiimote);
-						    exit = 1;
-						    break;
+					        // User disconnect (Power button)
+					        reload_wiimotes = 1;
+					        break;
 					    case CWiimote::EVENT_UNEXPECTED_DISCONNECT:
-						    // Pause
+					        // Unexpected disconenct (Battery)
+					    	HandleDisconnect(wiimote);
+						    reload_wiimotes = 1;
 						    break;
 					    case CWiimote::EVENT_STATUS:
 						    // Handle status event
