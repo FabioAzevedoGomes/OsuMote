@@ -6,14 +6,14 @@ public partial class MainWindow : Gtk.Window
 {
     private int connection_status;
 
-    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int connect_wiimotes();
-    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int enable_motion_sensing();
-    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int disconnect_wiimotes();
-    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void calibrate_force(int axis, int turn);
-    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void toggle_vibration();
-    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void toggle_sound();
-    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int set_sound(string filename, int type);
-    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void play_sound(int type);
+    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int  ConnectWiimotes();
+    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int  EnableMotionSensing();
+    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int  DisconnectWiimotes();
+    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void CalibrateForce(int axis, int turn);
+    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void ToggleVibration();
+    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void ToggleSound();
+    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int  SetSound(string filename, int type);
+    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void PlaySound(int type);
 
     public MainWindow() : base(Gtk.WindowType.Toplevel) => Build();
 
@@ -36,7 +36,7 @@ public partial class MainWindow : Gtk.Window
         if (cd_result == -5) // Dialog OK
         {
             // Attempt to connect to wiimote
-            connection_status = connect_wiimotes();
+            connection_status = ConnectWiimotes();
 
             // If connection sucessful
             if (connection_status > 0)
@@ -48,7 +48,7 @@ public partial class MainWindow : Gtk.Window
                 gyro_md.Destroy();
 
                 // Enable motion sensing and calibrate the gyroscope
-                int status = enable_motion_sensing();
+                int status = EnableMotionSensing();
 
                 // Enable the calibration and disconnect buttons, as well as the feedback frame
                 // Disable the connect button
@@ -90,7 +90,7 @@ public partial class MainWindow : Gtk.Window
         downfirst_md.Destroy();
 
         // Record user movements after OK is pressed
-        calibrate_force(0, 0);
+        CalibrateForce(0, 0);
 
         // Show message with instructions for second move
         MessageDialog downsecond_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
@@ -103,7 +103,7 @@ public partial class MainWindow : Gtk.Window
         downsecond_md.Destroy();
 
         // Record user movements after OK is pressed 
-        calibrate_force(0, 1);
+        CalibrateForce(0, 1);
 
         // Show message with instructions for third move
         MessageDialog downthird_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
@@ -116,7 +116,7 @@ public partial class MainWindow : Gtk.Window
         downthird_md.Destroy();
 
         // Record user movements after OK is pressed
-        calibrate_force(0, 2);
+        CalibrateForce(0, 2);
 
 
         // Calibrate sideways movement
@@ -132,7 +132,7 @@ public partial class MainWindow : Gtk.Window
         sidefirst_md.Destroy();
 
         // Record user movements after OK is pressed
-        calibrate_force(1, 0);
+        CalibrateForce(1, 0);
 
         MessageDialog sidesecond_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
          "Very good, now a second time")
@@ -144,7 +144,7 @@ public partial class MainWindow : Gtk.Window
         sidesecond_md.Destroy();
 
         // Record user movements affter OK is pressed
-        calibrate_force(1, 1);
+        CalibrateForce(1, 1);
 
         MessageDialog sidethird_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
          "And lastly a third time")
@@ -156,7 +156,7 @@ public partial class MainWindow : Gtk.Window
         sidethird_md.Destroy();
 
         // Record user movements after OK is pressed
-        calibrate_force(1, 2);
+        CalibrateForce(1, 2);
 
     }
 
@@ -172,7 +172,7 @@ public partial class MainWindow : Gtk.Window
 
         if (dm_result == -5) // Dialog OK
         {
-            connection_status = disconnect_wiimotes();
+            connection_status = DisconnectWiimotes();
 
             if (connection_status == 0)
             {
@@ -203,7 +203,7 @@ public partial class MainWindow : Gtk.Window
     protected void ToggleVibrationHandler(object sender, EventArgs e)
     {
         /* Toggle vibration on hit */
-        toggle_vibration();
+        ToggleVibration();
     }
 
     protected void ToggleSoundHandler(object sender, EventArgs e)
@@ -213,13 +213,13 @@ public partial class MainWindow : Gtk.Window
         else soundFrame.Sensitive = false;
 
         /* Toggle sound playing on hit*/
-        toggle_sound();
+        ToggleSound();
     }
 
     protected void CenterListenHandler(object sender, EventArgs e)
     {
         /* Let user listen to sound for drum center hit*/
-        play_sound(0);
+        PlaySound(0);
     }
 
     protected void CenterChooseHandler(object sender, EventArgs e)
@@ -231,7 +231,7 @@ public partial class MainWindow : Gtk.Window
         file_chooser.Show(); // TODO filter only sound files
 
         // Try to set center sound to selected file
-        if (set_sound(file_chooser.Filename, 0) == 0)
+        if (SetSound(file_chooser.Filename, 0) == 0)
         {
             // Show message to user signaling success
             MessageDialog soundset_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
@@ -253,7 +253,7 @@ public partial class MainWindow : Gtk.Window
     protected void SideListenHandler(object sender, EventArgs e)
     {
         /* Let user listen to sound for drum side hit*/
-        play_sound(1);
+        PlaySound(1);
     }
 
     protected void SideChooseHandler(object sender, EventArgs e)
@@ -264,7 +264,7 @@ public partial class MainWindow : Gtk.Window
         file_chooser.Show(); // TODO filter only sound files
 
         // Try to set center sound to selected file
-        if (set_sound(file_chooser.Filename, 1) == 0)
+        if (SetSound(file_chooser.Filename, 1) == 0)
         {
             // Show message to user signaling success
             MessageDialog soundset_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,

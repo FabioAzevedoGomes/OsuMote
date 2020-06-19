@@ -2,36 +2,36 @@
 
 namespace ControllerManager
 {
-    // Status variables
-    static CWii wii;
-    static int connected_wiimotes;
-    static double recorded_rates[MAX_RECORDINGS][3];
-    static int position_index; // Last place where a rate trio was stored
-    static directions last_read, last_direction; // Last detected reading and actual last detected direction, Difference is last_direction won't be NONE
-    static Display* display;
-    static bool vibration; // Whether vibration is enabled or not
-    static bool sound; // Whether sound is enabled or not
-    static char* center_sound, sides_sound; // Path to the sound files to be played through the speakers
 
-    // Calibration and detection variables
-    static double angle_rate_threshold_down  = 900; // Angle rate limit for pitch to be detected as down
-    static double angle_rate_threshold_sides = 500; // Angle rate limit for yaw to be detected as sides
-    static double calibration_angles[MAX_CALIBRATION_RECORDINGS][3];
-    static int    calibration_index = 0; // Position in the calibration array 
-    static int    calibration_turn  = 0; // Turn of calibration (0 1 or 2)
-    static int    calibration_axis  = 0; // Axis currently being calibrated (0 is down, 1/2 is sides)
-    static int    calibrating      = 0; // Flag if calibration is currently ongoing
+    // Information about the current status of the application
+    static struct status_t      application_status;
+    static struct refs_t        application_references;
+    static struct calibration_t calibration_status;
+
+    // Xinput display for sending keypresses
+    static Display* display;
 
     // ===================================================================================
     // Non-exposed functions
     // ===================================================================================
 
-    void set_index(int n)
+    // Updates last recorded angle change rates
+    void UpdateRates(double pitch_rate, double roll_rate, double yaw_rate)
     {
-        position_index = n;
+	    // Update rates history
+        application_references.recorded_rates[application_references.position_index][0] = pitch_rate;
+        application_references.recorded_rates[application_references.position_index][1] =  roll_rate;
+        application_references.recorded_rates[application_references.position_index][2] =   yaw_rate;
+
+        application_references.position_index++;
+        if (application_references.position_index >= MAX_RECORDINGS) 
+            // Write over the oldest reading
+            application_references.position_index = 0;
+
     }
-    //                             double recorded_rates[MAX_RECORDINGS][3]
-    void max_rates(double* result, double recorded_rates[][3], int size)
+
+    // Returns in result the maximum found angle change for each axis
+    void MaxAngleChangeRates(double* result, double recorded_rates[][3], int size)
     {
 	    for (int i=0; i < 3; i ++)
 	    {
@@ -111,61 +111,62 @@ namespace ControllerManager
         
     }
 
+    // Handle an unexpected controller disconnect (Pause the game)
     void HandleDisconnect(CWiimote &wm) 
-    {   // Pause game on controller disconnect
+    {
         SendToGame(UP, 0);
     }
 
     // Detect direction of movement
-    void detect_movement(int is_pressed_B)
+    void DetectMovement(int is_pressed_B)
     {
 
-	    double solution[3];
-	    // Get the max rates for all 3 axis
-	    max_rates(solution, recorded_rates, MAX_RECORDINGS);
-        
         int significantMovement = 0; // Flag if there was a significant move detected
+	    double solution[3]; // Max angle change rates for each axis
+
+	    // Get the max rates for all 3 axis
+	    MaxAngleChangeRates(solution, application_references.recorded_rates, MAX_RECORDINGS);
         
 	    // If pitch change was greater than yaw change in the last MAX_RECORDINGS readings
 	    // and greater than the threshold
-        if (abs(solution[0]) > abs(solution[2]) && solution[0] > angle_rate_threshold_down)
+        if (abs(solution[0]) > abs(solution[2]) && solution[0] > calibration_status.angle_rate_threshold_down)
         {
-            last_read = DOWN;
+            application_references.last_read = DOWN;
             significantMovement = 1;
         }
 	    // Else if yaw change was greater than the treshold
-	    else if (abs(solution[2]) > angle_rate_threshold_sides)
+	    else if (abs(solution[2]) > calibration_status.angle_rate_threshold_sides)
         {
-            if (solution[2] > 0 && last_read != RIGHT)
+            if (solution[2] > 0 && application_references.last_read != RIGHT)
             {
-                last_read = LEFT;
+                application_references.last_read = LEFT;
             }
             else
             {
-                if (last_read != LEFT) last_read = RIGHT;
+                if (application_references.last_read != LEFT) application_references.last_read = RIGHT;
             }
             significantMovement = 1;
         }
-
 
 	    // If there was a significant movement
 	    if (significantMovement)
         {
-            last_direction = last_read;
+            application_references.last_direction = application_references.last_read;
         }
         else
         {
-            if (last_read != NONE)
+            if (application_references.last_read != NONE)
 		    {
 			    // If this is the case, some movement just finished and should be sent to the game 
 			    // in the form of a kepress
-			    SendToGame(last_read, is_pressed_B);
+			    SendToGame(application_references.last_read, is_pressed_B);
                 
                 /* TODO Check for sound and vibration*/
 
 		    }
-            // wether a move was
-		    last_read = NONE;
+
+            // Reset last read after movement was processed
+		    application_references.last_read = NONE;
         }
     }
 
@@ -226,60 +227,65 @@ namespace ControllerManager
     // Handle a sensor update
     void HandleEvent(CWiimote &wm)
     {
-
 	    // Get pitch roll and yaw rates
         float pitch_rate,roll_rate,yaw_rate;
         wm.ExpansionDevice.MotionPlus.Gyroscope.GetRates(roll_rate,pitch_rate,yaw_rate);
         
-        if (calibrating && calibration_index < MAX_CALIBRATION_RECORDINGS)
+        if (application_status.calibrating && calibration_status.calibration_index < MAX_CALIBRATION_RECORDINGS)
         {
-            switch (calibration_axis){
+            switch (calibration_status.calibration_axis){
                 
                 case 0:
-                    calibration_angles[calibration_index][calibration_turn] = pitch_rate;
+                    calibration_status.calibration_angles[calibration_status.calibration_index][calibration_status.calibration_turn] = pitch_rate;
                     break;
                 case 1:
                 case 2:
-                    calibration_angles[calibration_index][calibration_turn] = yaw_rate;
+                    calibration_status.calibration_angles[calibration_status.calibration_index][calibration_status.calibration_turn] = yaw_rate;
                 default:
                     break;
             }
-            calibration_index++;
+            calibration_status.calibration_index++;
         }
         
 	    // Detect movement
-	    detect_movement(wm.Buttons.isHeld(CButtons::BUTTON_B));
+	    DetectMovement(wm.Buttons.isHeld(CButtons::BUTTON_B));
 
-	    // Update rates history
-        recorded_rates[position_index][0] = pitch_rate;
-        recorded_rates[position_index][1] =  roll_rate;
-        recorded_rates[position_index][2] =   yaw_rate;
-
-        set_index(position_index + 1);
-        if (position_index >= MAX_RECORDINGS) set_index(0);	// Write over the oldest reading
-
-	    // Print debug stuff
-	    
+        // Update latest readings
+	    UpdateRates(pitch_rate, roll_rate, yaw_rate);
     }
 
     // ===================================================================================
     // Exposed functions
     // ===================================================================================
-    extern "C" void init()
+    extern "C" void InitLibrary()
     {
-        vibration = false;
-        sound = false;
-        set_connected_wiimotes(0);
-        set_index(0);
+        // Start sound, vibration and calirbation flags as false
+        application_status.vibration   = false;
+        application_status.sound       = false;
+        application_status.calibrating = false;
+
+        // Set connected wiimote count and reading index to 0
+        application_references.connected_wiimotes = 0;
+        application_references.position_index = 0;
+
+        // Set angle thresholds to default
+        calibration_status.angle_rate_threshold_down  = 900;
+        calibration_status.angle_rate_threshold_sides = 500;
+        
+        // Set calibration data as 0 (Not started)
+        calibration_status.calibration_index = 0;
+        calibration_status.calibration_turn  = 0;
+        calibration_status.calibration_axis  = 0;
+
         display = XOpenDisplay(NULL);
     }
     
-    extern "C" void set_connected_wiimotes(int n)
+    extern "C" void Finish()
     {
-        connected_wiimotes = n;
+        application_references.connected_wiimotes = EXIT_SIGNAL;
     }
 
-    extern "C" int connect_wiimotes()
+    extern "C" int  ConnectWiimotes()
     {
         int index = 0;
         std::vector<CWiimote>::iterator i;
@@ -287,7 +293,7 @@ namespace ControllerManager
         // LED Map for the wiimote
         int LED_MAP[4] = {CWiimote::LED_1, CWiimote::LED_2, CWiimote::LED_3, CWiimote::LED_4};
 
-         std::vector<CWiimote>& wiimotes = wii.FindAndConnect();
+        std::vector<CWiimote>& wiimotes = application_references.wii.FindAndConnect();
         
         if (!wiimotes.size())
             return ERROR_BLUETOOTH_OFF; // No wiimotes found and/or bluetooth is turned OFF
@@ -300,26 +306,26 @@ namespace ControllerManager
                 wiimote.SetLEDs(LED_MAP[index]);
             }
 
-            connected_wiimotes = wiimotes.size(); // Update connected count so controller manager can start detecting events
+            application_references.connected_wiimotes = wiimotes.size(); // Update connected count so controller manager can start detecting events
             
             return wiimotes.size(); // Sucessfully connected to wiimotes.size() wiimotes
         }
     }
 
-    extern "C" int disconnect_wiimotes()
+    extern "C" int  DisconnectWiimotes()
     {
         // First we tell user to hold power button, then call this function
     
-        std::vector<CWiimote>& wiimotes = wii.GetWiimotes();
+        std::vector<CWiimote>& wiimotes = application_references.wii.GetWiimotes();
         
         return wiimotes.size();
         
     }
 
-    extern "C" int enable_motion_sensing()
+    extern "C" int  EnableMotionSensing()
     {
         int index = 0;
-        std::vector<CWiimote>& wiimotes = wii.GetWiimotes();
+        std::vector<CWiimote>& wiimotes = application_references.wii.GetWiimotes();
         std::vector<CWiimote>::iterator i;
         
         
@@ -335,31 +341,31 @@ namespace ControllerManager
         return 0;
     }
 
-    extern "C" void controller_manager()
+    extern "C" void ControllerManager()
     {
     
         int reload_wiimotes = 0;
     
         // Wait for first wiimote connection
-	    while(connected_wiimotes <= 0 && (connected_wiimotes != EXIT_SIGNAL)){}
+	    while(application_references.connected_wiimotes <= 0 && (application_references.connected_wiimotes != EXIT_SIGNAL)){}
 
 	    // Get vector containing wiimotes
-	    std::vector<CWiimote>& wiimotes = wii.GetWiimotes();
+	    std::vector<CWiimote>& wiimotes = application_references.wii.GetWiimotes();
 	    std::vector<CWiimote>::iterator i;
 
 	    // Start main loop
         int exit = 0;
-        while (!exit && connected_wiimotes != EXIT_SIGNAL)
+        while (!exit && application_references.connected_wiimotes != EXIT_SIGNAL)
         {   
             
             if (reload_wiimotes)
             {
-                wiimotes = wii.GetWiimotes();
+                wiimotes = application_references.wii.GetWiimotes();
                 reload_wiimotes = 0;
             }
             
 		    // Poll the Wiimotes for updates
-		    if ( wii.Poll() )
+		    if ( application_references.wii.Poll() )
 		    {
 			    // For each wiimote present
 			    for (i = wiimotes.begin(); i != wiimotes.end(); ++i)
@@ -395,43 +401,39 @@ namespace ControllerManager
         // Disconnect from X
         XCloseDisplay(display);
 
-        // return
+        // return;
     }
     
-    extern "C" void calibrate_force(int axis, int turn)
+    extern "C" void CalibrateForce(int axis, int turn)
     {
-        /*  
-        static int angle_rate_threshold_down  = 900; // Angle rate limit for pitch to be detected as down
-        static int angle_rate_threshold_sides = 500; // Angle rate limit for yaw to be detected as sides
 
-        static int calibration_angles[MAX_CALIBRATION_RECORDINGS][3];
-        */
         if (turn == 0) // If it's the first step, clear the recording array
         {
             for (int i = 0 ; i < MAX_CALIBRATION_RECORDINGS; i++)
             {
-                calibration_angles[i][0] = 0.0;
-                calibration_angles[i][1] = 0.0;
-                calibration_angles[i][2] = 0.0;
+                calibration_status.calibration_angles[i][0] = 0.0;
+                calibration_status.calibration_angles[i][1] = 0.0;
+                calibration_status.calibration_angles[i][2] = 0.0;
             }
         }
         
         /* Tell controller manager to record the rates */
-        calibration_index = 0;
-        calibration_turn = turn;
-        calibration_axis = axis;
-        calibrating = 1;
+        calibration_status.calibration_index = 0;
+        calibration_status.calibration_turn = turn;
+        calibration_status.calibration_axis = axis;
+        application_status.calibrating = true;
         
         // Wait until all rates are recorded
-        while(calibration_index < MAX_CALIBRATION_RECORDINGS) { }
+        while(calibration_status.calibration_index < MAX_CALIBRATION_RECORDINGS) { }
         
-        calibrating = 0;
+        // Stop recording
+        application_status.calibrating = 0;
         
         if (turn == 1) // If it's the last step, calculate average max
         {
             double result[3];
             // Get max for each of the 3 recordings
-            max_rates(result, calibration_angles, MAX_CALIBRATION_RECORDINGS);
+            MaxAngleChangeRates(result, calibration_status.calibration_angles, MAX_CALIBRATION_RECORDINGS);
             
             // Average these max values
             //             recording 0   recording 1  recording 2 
@@ -439,27 +441,27 @@ namespace ControllerManager
             
             if (axis == 0) // If down axis
             {
-                angle_rate_threshold_down = average;            
+                calibration_status.angle_rate_threshold_down = average;            
             }
             else // If side axis
             {
-                angle_rate_threshold_sides = average;
+                calibration_status.angle_rate_threshold_sides = average;
             }
         }
         // return
     }
 
-    extern "C" void toggle_vibration()
+    extern "C" void ToggleVibration()
     {
-        vibration = !vibration;
+        application_status.vibration = !application_status.vibration;
     }
 
-    extern "C" void toggle_sound()
+    extern "C" void ToggleSound()
     {
-        sound = !sound;
+        application_status.sound = !application_status.sound;
     }
 
-    extern "C" int set_sound(char* filename, int type)
+    extern "C" int  SetSound(char* filename, int type)
     {
         // TODO Check if file exists and is a valid sound file
         // IF valid: 
@@ -467,7 +469,7 @@ namespace ControllerManager
         return 0;
     }
 
-    extern "C" void play_sound(int type)
+    extern "C" void PlaySound(int type)
     {
         // TODO Play the set sound for that type through the wiimote speakers
     }

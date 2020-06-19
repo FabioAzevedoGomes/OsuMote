@@ -19,11 +19,42 @@ namespace ControllerManager{
     // Directions enum
     typedef enum {LEFT, RIGHT, UP, DOWN, NONE} directions;
 
-    // Initialize library
-    extern "C" void init();
+    // Status flags in the application
+    struct status_t
+    {
+        bool calibrating; // Whether calibration is currently ongoing or not
+        bool vibration;   // Whether vibration is enabled or not
+        bool sound;       // Whether sound is enabled or not
+    };
 
-    // Set connected wiimote count
-    extern "C" void set_connected_wiimotes(int n);
+    // References and values used by the application to connect / detect motion
+    struct refs_t
+    {
+        CWii wii;    // Wii struct used by the application to manage wiimotes
+        int connected_wiimotes; // Current connected wiimote count
+        double recorded_rates[MAX_RECORDINGS][3]; // Angle rates recorded for motion detection
+        int position_index; // Current index in recorded_rates
+        directions last_read, last_direction; // Last assumed movement and last detected (sent) movement
+        char* center_sound, sides_sound; // Path to sound files used in center and side sounds
+    };
+
+    // Variables relating to the calibration of the wiimote force
+    struct calibration_t
+    {
+        int    calibration_index;
+        int    calibration_turn;
+        int    calibration_axis;
+        double calibration_angles[MAX_CALIBRATION_RECORDINGS][3];
+
+        double angle_rate_threshold_down;
+        double angle_rate_threshold_sides;
+    };
+    
+    // Initialize library
+    extern "C" void InitLibrary();
+
+    // Signals the controller manager thread to end
+    extern "C" void Finish();
 
     /*
     *   Connects to the user's wiimote
@@ -31,7 +62,7 @@ namespace ControllerManager{
     *    Positive integer => Number of connected wiimotes
     *    Negative or 0    => Error connecting / None connected
     */
-    extern "C" int connect_wiimotes();
+    extern "C" int ConnectWiimotes();
 
 
     /*
@@ -40,19 +71,19 @@ namespace ControllerManager{
     *    Positive or Negative => Error disconnecting wiimotes
     *    0                    => Wiimote disconnected sucessfuly
     */
-    extern "C" int disconnect_wiimotes();
+    extern "C" int DisconnectWiimotes();
     
     /* 
     *   Enable motion sensing on wiimote
     *   Returns:
     *    0 => Motion sensing enabled   
     */
-    extern "C" int enable_motion_sensing();
+    extern "C" int EnableMotionSensing();
 
     /*
     *   Main loop for the controller manager, should be spawned in a separate thread at the start of the application
     */
-    extern "C" void controller_manager();
+    extern "C" void ControllerManager();
 
     /*
     *   Records the user's movements 3 times, and sets the average
@@ -61,13 +92,13 @@ namespace ControllerManager{
     *    Axis 0 => DOWN
     *    Axis 1 => SIDES
     */
-    extern "C" void calibrate_force(int axis, int turn);
+    extern "C" void CalibrateForce(int axis, int turn);
 
     // Toggles vibration setting on controller hit
-    extern "C" void toggle_vibration();
+    extern "C" void ToggleVibration();
 
     // Toggles sound playing on controller hit
-    extern "C" void toggle_sound();
+    extern "C" void ToggleSound();
 
     /*
     *   Sets the path to the sound file played on controller hit
@@ -78,12 +109,12 @@ namespace ControllerManager{
     *    0        => File was found and sound played sucessfully
     *    Negative => File not found / Could not set sound
     */
-    extern "C" int set_sound(char* filename, int type);
+    extern "C" int SetSound(char* filename, int type);
 
     /*
     *   Plays the current set sound for provided type through the wiimote speaker
     *   Receives:
     *    type => Which hit to play this from (0: Center, 1: Sides)
     */
-    extern "C" void play_sound(int type);
+    extern "C" void PlaySound(int type);
 }

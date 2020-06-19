@@ -7,17 +7,17 @@ namespace TRAB_IHC
 
     class MainClass
     {
-        [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void init();
-        [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void controller_manager();
-        [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void set_connected_wiimotes(int n);
+        [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void InitLibrary();
+        [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void ControllerManager();
+        [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void Finish();
 
         public static void Main(string[] args)
         {
             // Initialize the wiiC library wrapper
-            init();
-            
+            InitLibrary();
+
             // Spawn the controller manager thread
-            ThreadStart work = controller_manager;
+            ThreadStart work = ControllerManager;
             Thread wm_manager = new Thread(work);
             wm_manager.Start();
 
@@ -27,8 +27,8 @@ namespace TRAB_IHC
             win.Show();
             Application.Run();
 
-            // Signal the controller manager thread to end
-            set_connected_wiimotes(-9);
+            // Finalize library
+            Finish();
                 
         }
     }
