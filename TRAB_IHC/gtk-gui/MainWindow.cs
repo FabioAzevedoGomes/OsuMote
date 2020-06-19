@@ -386,6 +386,7 @@ public partial class MainWindow
 		this.soundFrame.HasDefault = true;
 		this.Show();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler(this.OnDeleteEvent);
+		this.ControlsAction.Activated += new global::System.EventHandler(this.OnControlsActionActivated);
 		this.connectButton.Clicked += new global::System.EventHandler(this.ConnectHandler);
 		this.calibrateButton.Clicked += new global::System.EventHandler(this.CalibrateHandler);
 		this.disconnectButton.Clicked += new global::System.EventHandler(this.DisconnectHandler);
@@ -393,7 +394,7 @@ public partial class MainWindow
 		this.soundCheckbutton.Toggled += new global::System.EventHandler(this.ToggleSoundHandler);
 		this.centerListenButton.Clicked += new global::System.EventHandler(this.CenterListenHandler);
 		this.centerChooseButton.Clicked += new global::System.EventHandler(this.CenterChooseHandler);
-		this.sidesListenButton.Clicked += new global::System.EventHandler(this.SiideListenHandler);
+		this.sidesListenButton.Clicked += new global::System.EventHandler(this.SideListenHandler);
 		this.sidesChooseButton.Clicked += new global::System.EventHandler(this.SideChooseHandler);
 	}
 }

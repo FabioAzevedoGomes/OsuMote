@@ -54,12 +54,36 @@ namespace ControllerManager{
     */
     extern "C" void controller_manager();
 
-
     /*
     *   Records the user's movements 3 times, and sets the average
     *   max angle change rate detected as the threshold for that axis
-    *   Axis 0 => DOWN
-    *   Axis 1 => SIDES
+    *   Receives:
+    *    Axis 0 => DOWN
+    *    Axis 1 => SIDES
     */
     extern "C" void calibrate_force(int axis, int turn);
+
+    // Toggles vibration setting on controller hit
+    extern "C" void toggle_vibration();
+
+    // Toggles sound playing on controller hit
+    extern "C" void toggle_sound();
+
+    /*
+    *   Sets the path to the sound file played on controller hit
+    *   Receives:
+    *    filename => Path to the file containing the sound to be played
+    *    type     => Which hit to set this sound on (0: Center, 1: Sides)
+    *   Returns:
+    *    0        => File was found and sound played sucessfully
+    *    Negative => File not found / Could not set sound
+    */
+    extern "C" int set_sound(char* filename, int type);
+
+    /*
+    *   Plays the current set sound for provided type through the wiimote speaker
+    *   Receives:
+    *    type => Which hit to play this from (0: Center, 1: Sides)
+    */
+    extern "C" void play_sound(int type);
 }

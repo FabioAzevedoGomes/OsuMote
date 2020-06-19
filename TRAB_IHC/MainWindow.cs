@@ -10,7 +10,11 @@ public partial class MainWindow : Gtk.Window
     [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int enable_motion_sensing();
     [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int disconnect_wiimotes();
     [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void calibrate_force(int axis, int turn);
- 
+    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void toggle_vibration();
+    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void toggle_sound();
+    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int set_sound(string filename, int type);
+    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void play_sound(int type);
+
     public MainWindow() : base(Gtk.WindowType.Toplevel) => Build();
 
     protected void OnDeleteEvent(object sender, DeleteEventArgs a)
@@ -199,7 +203,7 @@ public partial class MainWindow : Gtk.Window
     protected void ToggleVibrationHandler(object sender, EventArgs e)
     {
         /* Toggle vibration on hit */
-        // TODO
+        toggle_vibration();
     }
 
     protected void ToggleSoundHandler(object sender, EventArgs e)
@@ -209,36 +213,80 @@ public partial class MainWindow : Gtk.Window
         else soundFrame.Sensitive = false;
 
         /* Toggle sound playing on hit*/
-        // TODO
+        toggle_sound();
     }
 
     protected void CenterListenHandler(object sender, EventArgs e)
     {
         /* Let user listen to sound for drum center hit*/
-        // TODO
+        play_sound(0);
     }
 
     protected void CenterChooseHandler(object sender, EventArgs e)
     {
         /* Let user choose sound for drum center hit*/
-        // TODO
+
+        // Ask for user to select a soud file for usage
+        FileChooserDialog file_chooser = new FileChooserDialog("Open File", this, FileChooserAction.Open, ButtonsType.OkCancel);
+        file_chooser.Show(); // TODO filter only sound files
+
+        // Try to set center sound to selected file
+        if (set_sound(file_chooser.Filename, 0) == 0)
+        {
+            // Show message to user signaling success
+            MessageDialog soundset_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
+                "Sound was successfully set!");
+            soundset_md.Run();
+            soundset_md.Destroy();
+        }
+        else 
+        {
+            MessageDialog error_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Error, ButtonsType.Ok,
+                "There was an error while setting the sound file."); // TODO More descriptive error message
+            error_md.Run();
+            error_md.Destroy();
+        }
+
+        file_chooser.Destroy();
     }
 
-    protected void SiideListenHandler(object sender, EventArgs e)
+    protected void SideListenHandler(object sender, EventArgs e)
     {
         /* Let user listen to sound for drum side hit*/
-        // TODO
+        play_sound(1);
     }
 
     protected void SideChooseHandler(object sender, EventArgs e)
     {
         /* Let user choose sound for drum side hit*/
-        // TODO
+        // Ask for user to select a soud file for usage
+        FileChooserDialog file_chooser = new FileChooserDialog("Open File", this, FileChooserAction.Open, ButtonsType.OkCancel);
+        file_chooser.Show(); // TODO filter only sound files
+
+        // Try to set center sound to selected file
+        if (set_sound(file_chooser.Filename, 1) == 0)
+        {
+            // Show message to user signaling success
+            MessageDialog soundset_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
+                "Sound was successfully set!");
+            soundset_md.Run();
+            soundset_md.Destroy();
+        }
+        else
+        {
+            MessageDialog error_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Error, ButtonsType.Ok,
+                "There was an error while setting the sound file."); // TODO More descriptive error message
+            error_md.Run();
+            error_md.Destroy();
+        }
+
+        file_chooser.Destroy();
     }
 
     protected void OnControlsActionActivated(object sender, EventArgs e)
     {
-
+        /* Show available controls to user */
+        // TODO
     }
 
 }

@@ -2,14 +2,18 @@
 
 namespace ControllerManager
 {
-    // Important vars
+    // Status variables
     static CWii wii;
     static int connected_wiimotes;
     static double recorded_rates[MAX_RECORDINGS][3];
     static int position_index; // Last place where a rate trio was stored
     static directions last_read, last_direction; // Last detected reading and actual last detected direction, Difference is last_direction won't be NONE
     static Display* display;
+    static bool vibration; // Whether vibration is enabled or not
+    static bool sound; // Whether sound is enabled or not
+    static char* center_sound, sides_sound; // Path to the sound files to be played through the speakers
 
+    // Calibration and detection variables
     static double angle_rate_threshold_down  = 900; // Angle rate limit for pitch to be detected as down
     static double angle_rate_threshold_sides = 500; // Angle rate limit for yaw to be detected as sides
     static double calibration_angles[MAX_CALIBRATION_RECORDINGS][3];
@@ -143,6 +147,7 @@ namespace ControllerManager
             significantMovement = 1;
         }
 
+
 	    // If there was a significant movement
 	    if (significantMovement)
         {
@@ -155,6 +160,9 @@ namespace ControllerManager
 			    // If this is the case, some movement just finished and should be sent to the game 
 			    // in the form of a kepress
 			    SendToGame(last_read, is_pressed_B);
+                
+                /* TODO Check for sound and vibration*/
+
 		    }
             // wether a move was
 		    last_read = NONE;
@@ -171,6 +179,13 @@ namespace ControllerManager
         if (wm.Buttons.isJustPressed(CButtons::BUTTON_PLUS))
         {
             keycode = XKeysymToKeycode(display, XK_Escape);
+            XTestFakeKeyEvent(display, keycode, 1, 0);
+            XTestFakeKeyEvent(display, keycode, 0, 0);
+            XFlush(display);
+        }
+        if (wm.Buttons.isJustPressed(CButtons::BUTTON_A))
+        {
+            keycode = XKeysymToKeycode(display, XK_Return);
             XTestFakeKeyEvent(display, keycode, 1, 0);
             XTestFakeKeyEvent(display, keycode, 0, 0);
             XFlush(display);
@@ -252,12 +267,13 @@ namespace ControllerManager
     // ===================================================================================
     extern "C" void init()
     {
+        vibration = false;
+        sound = false;
         set_connected_wiimotes(0);
         set_index(0);
         display = XOpenDisplay(NULL);
     }
     
-
     extern "C" void set_connected_wiimotes(int n)
     {
         connected_wiimotes = n;
@@ -431,5 +447,28 @@ namespace ControllerManager
             }
         }
         // return
+    }
+
+    extern "C" void toggle_vibration()
+    {
+        vibration = !vibration;
+    }
+
+    extern "C" void toggle_sound()
+    {
+        sound = !sound;
+    }
+
+    extern "C" int set_sound(char* filename, int type)
+    {
+        // TODO Check if file exists and is a valid sound file
+        // IF valid: 
+        //Save file to sides_sound / center_sound and play it once to signal sucess
+        return 0;
+    }
+
+    extern "C" void play_sound(int type)
+    {
+        // TODO Play the set sound for that type through the wiimote speakers
     }
 }

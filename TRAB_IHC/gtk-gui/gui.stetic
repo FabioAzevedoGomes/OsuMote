@@ -333,7 +333,7 @@
                                                     <property name="Type">TextOnly</property>
                                                     <property name="Label">Listen</property>
                                                     <property name="UseUnderline">True</property>
-                                                    <signal name="Clicked" handler="SiideListenHandler" />
+                                                    <signal name="Clicked" handler="SideListenHandler" />
                                                   </widget>
                                                   <packing>
                                                     <property name="Position">1</property>
