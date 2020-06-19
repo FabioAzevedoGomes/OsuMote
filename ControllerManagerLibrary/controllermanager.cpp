@@ -118,9 +118,9 @@ namespace ControllerManager
     }
 
     // Detect direction of movement
-    void DetectMovement(int is_pressed_B)
+    void DetectMovement(CWiimote &wm)
     {
-
+        int is_pressed_B = wm.Buttons.isHeld(CButtons::BUTTON_B);
         int significantMovement = 0; // Flag if there was a significant move detected
 	    double solution[3]; // Max angle change rates for each axis
 
@@ -157,12 +157,18 @@ namespace ControllerManager
         {
             if (application_references.last_read != NONE)
 		    {
+
 			    // If this is the case, some movement just finished and should be sent to the game 
 			    // in the form of a kepress
 			    SendToGame(application_references.last_read, is_pressed_B);
                 
                 /* TODO Check for sound and vibration*/
-
+                if (application_status.vibration)
+                {
+                    wm.ToggleRumble();
+                    usleep(100000);
+                    wm.ToggleRumble();
+                }
 		    }
 
             // Reset last read after movement was processed
@@ -248,7 +254,7 @@ namespace ControllerManager
         }
         
 	    // Detect movement
-	    DetectMovement(wm.Buttons.isHeld(CButtons::BUTTON_B));
+	    DetectMovement(wm);
 
         // Update latest readings
 	    UpdateRates(pitch_rate, roll_rate, yaw_rate);
@@ -257,6 +263,7 @@ namespace ControllerManager
     // ===================================================================================
     // Exposed functions
     // ===================================================================================
+
     extern "C" void InitLibrary()
     {
         // Start sound, vibration and calirbation flags as false
