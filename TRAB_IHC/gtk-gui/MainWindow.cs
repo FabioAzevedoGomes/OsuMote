@@ -51,31 +51,7 @@ public partial class MainWindow
 
 	private global::Gtk.CheckButton vibrationCheckbutton;
 
-	private global::Gtk.CheckButton soundCheckbutton;
-
-	private global::Gtk.Frame soundFrame;
-
-	private global::Gtk.Alignment GtkAlignment2;
-
-	private global::Gtk.VBox vbox5;
-
-	private global::Gtk.HBox hbox2;
-
-	private global::Gtk.Label centerSoundLabel;
-
-	private global::Gtk.Button centerListenButton;
-
-	private global::Gtk.Button centerChooseButton;
-
-	private global::Gtk.HBox hbox3;
-
-	private global::Gtk.Label sideSoundLabel;
-
-	private global::Gtk.Button sidesListenButton;
-
-	private global::Gtk.Button sidesChooseButton;
-
-	private global::Gtk.Label soundFrameLabel;
+	private global::Gtk.Image feedbackImage;
 
 	private global::Gtk.Label feedbackFrameLabel;
 
@@ -229,136 +205,18 @@ public partial class MainWindow
 		w11.Position = 0;
 		w11.Expand = false;
 		w11.Fill = false;
-		// Container child vbox4.Gtk.Box+BoxChild
-		this.soundCheckbutton = new global::Gtk.CheckButton();
-		w3.SetTip(this.soundCheckbutton, "Play a sound through the wiimote speaker when a hit is registered (See below)", "Play a sound through the wiimote speaker when a hit is registered (See below)");
-		this.soundCheckbutton.CanFocus = true;
-		this.soundCheckbutton.Name = "soundCheckbutton";
-		this.soundCheckbutton.Label = "Sound";
-		this.soundCheckbutton.DrawIndicator = true;
-		this.soundCheckbutton.UseUnderline = true;
-		this.vbox4.Add(this.soundCheckbutton);
-		global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox4[this.soundCheckbutton]));
-		w12.Position = 1;
-		w12.Expand = false;
-		w12.Fill = false;
 		this.vbox2.Add(this.vbox4);
-		global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.vbox4]));
-		w13.Position = 0;
+		global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.vbox4]));
+		w12.Position = 0;
+		// Container child vbox2.Gtk.Box+BoxChild
+		this.feedbackImage = new global::Gtk.Image();
+		this.feedbackImage.Name = "feedbackImage";
+		this.feedbackImage.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("TRAB_IHC.res.TaikoNoInputs.png");
+		this.vbox2.Add(this.feedbackImage);
+		global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.feedbackImage]));
+		w13.Position = 1;
 		w13.Expand = false;
 		w13.Fill = false;
-		// Container child vbox2.Gtk.Box+BoxChild
-		this.soundFrame = new global::Gtk.Frame();
-		this.soundFrame.Sensitive = false;
-		this.soundFrame.CanDefault = true;
-		this.soundFrame.Name = "soundFrame";
-		this.soundFrame.ShadowType = ((global::Gtk.ShadowType)(2));
-		this.soundFrame.BorderWidth = ((uint)(2));
-		// Container child soundFrame.Gtk.Container+ContainerChild
-		this.GtkAlignment2 = new global::Gtk.Alignment(0F, 0F, 1F, 1F);
-		this.GtkAlignment2.Name = "GtkAlignment2";
-		this.GtkAlignment2.LeftPadding = ((uint)(12));
-		// Container child GtkAlignment2.Gtk.Container+ContainerChild
-		this.vbox5 = new global::Gtk.VBox();
-		this.vbox5.Name = "vbox5";
-		this.vbox5.Homogeneous = true;
-		this.vbox5.Spacing = 6;
-		this.vbox5.BorderWidth = ((uint)(2));
-		// Container child vbox5.Gtk.Box+BoxChild
-		this.hbox2 = new global::Gtk.HBox();
-		this.hbox2.Name = "hbox2";
-		this.hbox2.Spacing = 6;
-		// Container child hbox2.Gtk.Box+BoxChild
-		this.centerSoundLabel = new global::Gtk.Label();
-		this.centerSoundLabel.Name = "centerSoundLabel";
-		this.centerSoundLabel.LabelProp = global::Mono.Unix.Catalog.GetString("Drum Center Hit");
-		this.hbox2.Add(this.centerSoundLabel);
-		global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.centerSoundLabel]));
-		w14.Position = 0;
-		w14.Expand = false;
-		w14.Fill = false;
-		// Container child hbox2.Gtk.Box+BoxChild
-		this.centerListenButton = new global::Gtk.Button();
-		w3.SetTip(this.centerListenButton, "Listen to the sound for a hit in the drum center", "Listen to the sound for a hit in the drum center");
-		this.centerListenButton.CanFocus = true;
-		this.centerListenButton.Name = "centerListenButton";
-		this.centerListenButton.UseUnderline = true;
-		this.centerListenButton.Label = "Listen";
-		this.hbox2.Add(this.centerListenButton);
-		global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.centerListenButton]));
-		w15.Position = 1;
-		w15.Expand = false;
-		w15.Fill = false;
-		// Container child hbox2.Gtk.Box+BoxChild
-		this.centerChooseButton = new global::Gtk.Button();
-		w3.SetTip(this.centerChooseButton, "Choose what sound will be played when a center hit is registered", "Choose what sound will be played when a center hit is registered");
-		this.centerChooseButton.CanFocus = true;
-		this.centerChooseButton.Name = "centerChooseButton";
-		this.centerChooseButton.UseUnderline = true;
-		this.centerChooseButton.Label = "Choose";
-		this.hbox2.Add(this.centerChooseButton);
-		global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.centerChooseButton]));
-		w16.Position = 2;
-		w16.Expand = false;
-		w16.Fill = false;
-		this.vbox5.Add(this.hbox2);
-		global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.vbox5[this.hbox2]));
-		w17.Position = 0;
-		w17.Expand = false;
-		w17.Fill = false;
-		// Container child vbox5.Gtk.Box+BoxChild
-		this.hbox3 = new global::Gtk.HBox();
-		this.hbox3.Name = "hbox3";
-		this.hbox3.Spacing = 6;
-		// Container child hbox3.Gtk.Box+BoxChild
-		this.sideSoundLabel = new global::Gtk.Label();
-		this.sideSoundLabel.Name = "sideSoundLabel";
-		this.sideSoundLabel.LabelProp = global::Mono.Unix.Catalog.GetString("Drum Side Hit");
-		this.hbox3.Add(this.sideSoundLabel);
-		global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.hbox3[this.sideSoundLabel]));
-		w18.Position = 0;
-		w18.Expand = false;
-		w18.Fill = false;
-		w18.Padding = ((uint)(8));
-		// Container child hbox3.Gtk.Box+BoxChild
-		this.sidesListenButton = new global::Gtk.Button();
-		w3.SetTip(this.sidesListenButton, "Listen to the sound for a hit on drum sides", "Listen to the sound for a hit on drum sides");
-		this.sidesListenButton.CanFocus = true;
-		this.sidesListenButton.Name = "sidesListenButton";
-		this.sidesListenButton.UseUnderline = true;
-		this.sidesListenButton.Label = "Listen";
-		this.hbox3.Add(this.sidesListenButton);
-		global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.hbox3[this.sidesListenButton]));
-		w19.Position = 1;
-		w19.Expand = false;
-		w19.Fill = false;
-		// Container child hbox3.Gtk.Box+BoxChild
-		this.sidesChooseButton = new global::Gtk.Button();
-		w3.SetTip(this.sidesChooseButton, "Choose what sound will be played when a side hit is registered", "Choose what sound will be played when a side hit is registered");
-		this.sidesChooseButton.CanFocus = true;
-		this.sidesChooseButton.Name = "sidesChooseButton";
-		this.sidesChooseButton.UseUnderline = true;
-		this.sidesChooseButton.Label = "Choose";
-		this.hbox3.Add(this.sidesChooseButton);
-		global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.hbox3[this.sidesChooseButton]));
-		w20.Position = 2;
-		w20.Expand = false;
-		w20.Fill = false;
-		this.vbox5.Add(this.hbox3);
-		global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.vbox5[this.hbox3]));
-		w21.Position = 1;
-		w21.Expand = false;
-		w21.Fill = false;
-		this.GtkAlignment2.Add(this.vbox5);
-		this.soundFrame.Add(this.GtkAlignment2);
-		this.soundFrameLabel = new global::Gtk.Label();
-		this.soundFrameLabel.Name = "soundFrameLabel";
-		this.soundFrameLabel.LabelProp = global::Mono.Unix.Catalog.GetString("<b>Sound Options</b>");
-		this.soundFrameLabel.UseMarkup = true;
-		this.soundFrame.LabelWidget = this.soundFrameLabel;
-		this.vbox2.Add(this.soundFrame);
-		global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.soundFrame]));
-		w24.Position = 1;
 		this.GtkAlignment1.Add(this.vbox2);
 		this.feedbackFrame.Add(this.GtkAlignment1);
 		this.feedbackFrameLabel = new global::Gtk.Label();
@@ -368,13 +226,13 @@ public partial class MainWindow
 		this.feedbackFrame.LabelWidget = this.feedbackFrameLabel;
 		this.alignment3.Add(this.feedbackFrame);
 		this.mainWindowSeparationBox.Add(this.alignment3);
-		global::Gtk.Box.BoxChild w28 = ((global::Gtk.Box.BoxChild)(this.mainWindowSeparationBox[this.alignment3]));
-		w28.Position = 1;
+		global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.mainWindowSeparationBox[this.alignment3]));
+		w17.Position = 1;
 		this.vbox3.Add(this.mainWindowSeparationBox);
-		global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.mainWindowSeparationBox]));
-		w29.Position = 1;
-		w29.Expand = false;
-		w29.Fill = false;
+		global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.mainWindowSeparationBox]));
+		w18.Position = 1;
+		w18.Expand = false;
+		w18.Fill = false;
 		this.alignment1.Add(this.vbox3);
 		this.Add(this.alignment1);
 		if ((this.Child != null))
@@ -382,19 +240,15 @@ public partial class MainWindow
 			this.Child.ShowAll();
 		}
 		this.DefaultWidth = 576;
-		this.DefaultHeight = 226;
-		this.soundFrame.HasDefault = true;
+		this.DefaultHeight = 275;
 		this.Show();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler(this.OnDeleteEvent);
+		this.KeyPressEvent += new global::Gtk.KeyPressEventHandler(this.KeyPressHandler);
+		this.KeyReleaseEvent += new global::Gtk.KeyReleaseEventHandler(this.KeyReleaseHandler);
 		this.ControlsAction.Activated += new global::System.EventHandler(this.OnControlsActionActivated);
 		this.connectButton.Clicked += new global::System.EventHandler(this.ConnectHandler);
 		this.calibrateButton.Clicked += new global::System.EventHandler(this.CalibrateHandler);
 		this.disconnectButton.Clicked += new global::System.EventHandler(this.DisconnectHandler);
 		this.vibrationCheckbutton.Toggled += new global::System.EventHandler(this.ToggleVibrationHandler);
-		this.soundCheckbutton.Toggled += new global::System.EventHandler(this.ToggleSoundHandler);
-		this.centerListenButton.Clicked += new global::System.EventHandler(this.CenterListenHandler);
-		this.centerChooseButton.Clicked += new global::System.EventHandler(this.CenterChooseHandler);
-		this.sidesListenButton.Clicked += new global::System.EventHandler(this.SideListenHandler);
-		this.sidesChooseButton.Clicked += new global::System.EventHandler(this.SideChooseHandler);
 	}
 }

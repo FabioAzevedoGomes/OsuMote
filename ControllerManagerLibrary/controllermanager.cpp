@@ -2,7 +2,6 @@
 
 namespace ControllerManager
 {
-
     // Information about the current status of the application
     static struct status_t      application_status;
     static struct refs_t        application_references;
@@ -58,7 +57,8 @@ namespace ControllerManager
             // and thus mapped to DOUBLE_CENTER or RIGHT_AND_LEFT according to axis
             if (direction == DOWN)
             {
-	            std::cout << "Movement was:  DOUBLE CENTER" << std::endl;
+                application_references.last_sent = DOUBLE_DOWN;
+	            //std::cout << "Movement was:  DOUBLE CENTER" << std::endl;
 	            keycode = XKeysymToKeycode(display, XK_F);
 	            // Press the key
                 XTestFakeKeyEvent(display, keycode, 1, 0);
@@ -69,7 +69,8 @@ namespace ControllerManager
             }
             else
             {
-	            std::cout << "Movement was: LEFT + RIGHT" << std::endl;
+                application_references.last_sent = DOUBLE_SIDE;
+	            //std::cout << "Movement was: LEFT + RIGHT" << std::endl;
 	            keycode = XKeysymToKeycode(display, XK_D);
 	            // Press the key
                 XTestFakeKeyEvent(display, keycode, 1, 0);
@@ -83,15 +84,18 @@ namespace ControllerManager
         { // If the key is not held, moves should be interpreted as simple moves
             switch (direction){
 	            case DOWN: 
-		            std::cout << "Movement was: DOWN" << std::endl;
+                    application_references.last_sent = DOWN;
+		            //std::cout << "Movement was: DOWN" << std::endl;
 		            keycode = XKeysymToKeycode(display, XK_F);
 		            break;
 	            case LEFT:
-		            std::cout << "Movement was: LEFT" << std::endl;
+                   application_references.last_sent = LEFT;
+		            //std::cout << "Movement was: LEFT" << std::endl;
 		            keycode = XKeysymToKeycode(display, XK_D);
 		            break;
 	            case RIGHT:
-		            std::cout << "Movement was: RIGHT" << std::endl;
+                    application_references.last_sent = RIGHT;
+		            //std::cout << "Movement was: RIGHT" << std::endl;
 		            keycode = XKeysymToKeycode(display, XK_K);
 		            break;
 		        case UP:
@@ -161,8 +165,8 @@ namespace ControllerManager
 			    // If this is the case, some movement just finished and should be sent to the game 
 			    // in the form of a kepress
 			    SendToGame(application_references.last_read, is_pressed_B);
-                
-                /* TODO Check for sound and vibration*/
+
+                // Rumble if enabled
                 if (application_status.vibration)
                 {
                     wm.ToggleRumble();
@@ -274,6 +278,7 @@ namespace ControllerManager
         // Set connected wiimote count and reading index to 0
         application_references.connected_wiimotes = 0;
         application_references.position_index = 0;
+        application_references.last_sent  = NONE;
 
         // Set angle thresholds to default
         calibration_status.angle_rate_threshold_down  = 900;
@@ -463,21 +468,28 @@ namespace ControllerManager
         application_status.vibration = !application_status.vibration;
     }
 
-    extern "C" void ToggleSound()
+    extern "C" int  GetLastReadMovement()
     {
-        application_status.sound = !application_status.sound;
-    }
-
-    extern "C" int  SetSound(char* filename, int type)
-    {
-        // TODO Check if file exists and is a valid sound file
-        // IF valid: 
-        //Save file to sides_sound / center_sound and play it once to signal sucess
-        return 0;
-    }
-
-    extern "C" void PlaySound(int type)
-    {
-        // TODO Play the set sound for that type through the wiimote speakers
+        switch (application_references.last_sent)
+        {
+            case LEFT:
+                return 1;
+            break;
+            case RIGHT:
+                return 2;
+            break;
+            case DOWN:
+                return 3;
+            break;
+            case DOUBLE_DOWN:
+                return 4;
+            break;
+            case DOUBLE_SIDE:
+                return 5;
+            break;
+            default:
+                return 0;
+            break;
+        }        
     }
 }

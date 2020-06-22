@@ -4,3 +4,10 @@
 /home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/obj/x86/Debug/TRAB_IHC.exe
 /home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/obj/x86/Debug/TRAB_IHC.pdb
 /home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/obj/x86/Debug/TRAB_IHC.csprojAssemblyReference.cache
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Debug/res/TaikoNoInputs.png
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Debug/res/TaikoRightSide.png
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Debug/res/TaikoRightCenter.png
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Debug/res/TaikoLeftSide.png
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Debug/res/TaikoLeftCenter.png
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Debug/res/TaikoDoubleSide.png
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Debug/res/TaikoDoubleCenter.png

@@ -1,24 +1,28 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.Threading;
 using Gtk;
 
 public partial class MainWindow : Gtk.Window
 {
     private int connection_status;
+    private bool d, f, j, k; // Whether keys are pressed
+    private static bool exit;
+    static int drum_img_state;
 
     [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int  ConnectWiimotes();
     [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int  EnableMotionSensing();
     [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int  DisconnectWiimotes();
     [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void CalibrateForce(int axis, int turn);
     [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void ToggleVibration();
-    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void ToggleSound();
-    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int  SetSound(string filename, int type);
-    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void PlaySound(int type);
+    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int  GetLastReadMovement();
 
     public MainWindow() : base(Gtk.WindowType.Toplevel) => Build();
 
     protected void OnDeleteEvent(object sender, DeleteEventArgs a)
     {
+        exit = true;
         Application.Quit();
         a.RetVal = true;
     }
@@ -56,6 +60,11 @@ public partial class MainWindow : Gtk.Window
                 disconnectButton.Sensitive = true;
                 feedbackFrame.Sensitive = true;
                 connectButton.Sensitive = false;
+
+                // Spawn a thread to update the graphics for the taiko drum
+                ThreadStart work2 = UpdateDrumGraphic;
+                Thread drum_updater = new Thread(work2);
+                drum_updater.Start();
             }
             else
             {
@@ -188,6 +197,9 @@ public partial class MainWindow : Gtk.Window
                 disconnectButton.Sensitive = false;
                 feedbackFrame.Sensitive = false;
                 connectButton.Sensitive = true;
+
+                // Kill taiko updater thread
+                exit = true;
             }
             else
             {
@@ -206,87 +218,68 @@ public partial class MainWindow : Gtk.Window
         ToggleVibration();
     }
 
-    protected void ToggleSoundHandler(object sender, EventArgs e)
-    { 
-        /* Enable/Disable sound options frame*/
-        if (!soundFrame.Sensitive) soundFrame.Sensitive = true;
-        else soundFrame.Sensitive = false;
-
-        /* Toggle sound playing on hit*/
-        ToggleSound();
-    }
-
-    protected void CenterListenHandler(object sender, EventArgs e)
-    {
-        /* Let user listen to sound for drum center hit*/
-        PlaySound(0);
-    }
-
-    protected void CenterChooseHandler(object sender, EventArgs e)
-    {
-        /* Let user choose sound for drum center hit*/
-
-        // Ask for user to select a soud file for usage
-        FileChooserDialog file_chooser = new FileChooserDialog("Open File", this, FileChooserAction.Open, ButtonsType.OkCancel);
-        file_chooser.Show(); // TODO filter only sound files
-
-        // Try to set center sound to selected file
-        if (SetSound(file_chooser.Filename, 0) == 0)
-        {
-            // Show message to user signaling success
-            MessageDialog soundset_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
-                "Sound was successfully set!");
-            soundset_md.Run();
-            soundset_md.Destroy();
-        }
-        else 
-        {
-            MessageDialog error_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Error, ButtonsType.Ok,
-                "There was an error while setting the sound file."); // TODO More descriptive error message
-            error_md.Run();
-            error_md.Destroy();
-        }
-
-        file_chooser.Destroy();
-    }
-
-    protected void SideListenHandler(object sender, EventArgs e)
-    {
-        /* Let user listen to sound for drum side hit*/
-        PlaySound(1);
-    }
-
-    protected void SideChooseHandler(object sender, EventArgs e)
-    {
-        /* Let user choose sound for drum side hit*/
-        // Ask for user to select a soud file for usage
-        FileChooserDialog file_chooser = new FileChooserDialog("Open File", this, FileChooserAction.Open, ButtonsType.OkCancel);
-        file_chooser.Show(); // TODO filter only sound files
-
-        // Try to set center sound to selected file
-        if (SetSound(file_chooser.Filename, 1) == 0)
-        {
-            // Show message to user signaling success
-            MessageDialog soundset_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
-                "Sound was successfully set!");
-            soundset_md.Run();
-            soundset_md.Destroy();
-        }
-        else
-        {
-            MessageDialog error_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Error, ButtonsType.Ok,
-                "There was an error while setting the sound file."); // TODO More descriptive error message
-            error_md.Run();
-            error_md.Destroy();
-        }
-
-        file_chooser.Destroy();
-    }
-
     protected void OnControlsActionActivated(object sender, EventArgs e)
     {
         /* Show available controls to user */
         // TODO
     }
 
+    public void UpdateDrumGraphic()
+    {
+    
+        int mvmnt = 0;
+        while (!exit)
+        {
+            mvmnt = GetLastReadMovement();
+
+            switch (mvmnt)
+            {
+                case 1: // Left
+                    if (drum_img_state != 1)
+                    {
+                        this.feedbackImage.Pixbuf = Gdk.Pixbuf.LoadFromResource("TRAB_IHC.res.TaikoLeftSide.png");
+                        drum_img_state = 1;
+                    }
+                    break;
+                case 2: // Right
+                    if (drum_img_state != 2)
+                    {
+                        this.feedbackImage.Pixbuf = Gdk.Pixbuf.LoadFromResource("TRAB_IHC.res.TaikoRightSide.png");
+                        drum_img_state = 2;
+                    }
+                    break;
+                case 3: // Center
+                    if (drum_img_state != 3)
+                    {
+                        this.feedbackImage.Pixbuf = Gdk.Pixbuf.LoadFromResource("TRAB_IHC.res.TaikoRightCenter.png");
+                        drum_img_state = 3;
+                    }
+                    break;
+                case 4: // Double Center
+                    if (drum_img_state != 4)
+                    {
+                        this.feedbackImage.Pixbuf = Gdk.Pixbuf.LoadFromResource("TRAB_IHC.res.TaikoDoubleCenter.png");
+                        drum_img_state = 4;
+                    }
+                    break;
+                case 5: // Double Sides
+                    if (drum_img_state != 5)
+                    {
+                        this.feedbackImage.Pixbuf = Gdk.Pixbuf.LoadFromResource("TRAB_IHC.res.TaikoDoubleSide.png");
+                        drum_img_state = 5;
+                    }
+                    break;
+                default: // None
+                    if (drum_img_state != 0)
+                    {
+                        //this.feedbackImage.Pixbuf = Gdk.Pixbuf.LoadFromResource("TRAB_IHC.res.TaikoDoubleSide.png");
+                        drum_img_state = 0;
+                    }
+                    break;
+            }
+
+            Debug.WriteLine("Movement: " + mvmnt);
+
+        }
+    }
 }

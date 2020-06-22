@@ -4,21 +4,20 @@
 #include <X11/extensions/XTest.h>
 #include <unistd.h>
 
-namespace ControllerManager{
-
+namespace ControllerManager
+{
     // Constants
     #define MAX_RECORDINGS 12
     #define MAX_CALIBRATION_RECORDINGS 128
-    //#define ANGLE_RATE_THRESHOLD_DOWN 900 // Angle rate limit for pitch to be detected as down
-    //#define ANGLE_RATE_THRESHOLD_SIDES 500 // Angle rate limit for yaw to be detected as sides
+
     // Error codes and signals
     #define ERROR_BLUETOOTH_OFF -1
     #define ERROR_NO_WIIMOTES -2
+    #define ERROR_FILE_NOT_FOUND -3
     #define EXIT_SIGNAL -9
 
-
     // Directions enum
-    typedef enum {LEFT, RIGHT, UP, DOWN, NONE} directions;
+    typedef enum {LEFT, RIGHT, UP, DOWN, NONE, DOUBLE_SIDE, DOUBLE_DOWN} directions;
 
     // Status flags in the application
     struct status_t
@@ -36,7 +35,9 @@ namespace ControllerManager{
         double recorded_rates[MAX_RECORDINGS][3]; // Angle rates recorded for motion detection
         int position_index; // Current index in recorded_rates
         directions last_read, last_direction; // Last assumed movement and last detected (sent) movement
-        char* center_sound, sides_sound; // Path to sound files used in center and side sounds
+        directions last_sent; // Last command sent to the game
+        char* center_sound; // Path to sound file used in center hit
+        char* sides_sound; // Path to sound file used in side hit
     };
 
     // Variables relating to the calibration of the wiimote force
@@ -64,7 +65,6 @@ namespace ControllerManager{
     *    Negative or 0    => Error connecting / None connected
     */
     extern "C" int ConnectWiimotes();
-
 
     /*
     *   Disconnects the user's wiimote
@@ -97,25 +97,16 @@ namespace ControllerManager{
 
     // Toggles vibration setting on controller hit
     extern "C" void ToggleVibration();
-
-    // Toggles sound playing on controller hit
-    extern "C" void ToggleSound();
-
+    
     /*
-    *   Sets the path to the sound file played on controller hit
-    *   Receives:
-    *    filename => Path to the file containing the sound to be played
-    *    type     => Which hit to set this sound on (0: Center, 1: Sides)
+    *   Returns last movement that was sent to the game
     *   Returns:
-    *    0        => File was found and sound played sucessfully
-    *    Negative => File not found / Could not set sound
+    *    0 => NONE
+    *    1 => LEFT
+    *    2 => RIGHT
+    *    3 => DOWN
+    *    4 => DOUBLE DOWN
+    *    5 => DOUBLE SIDES
     */
-    extern "C" int SetSound(char* filename, int type);
-
-    /*
-    *   Plays the current set sound for provided type through the wiimote speaker
-    *   Receives:
-    *    type => Which hit to play this from (0: Center, 1: Sides)
-    */
-    extern "C" void PlaySound(int type);
+    extern "C" int  GetLastReadMovement();
 }

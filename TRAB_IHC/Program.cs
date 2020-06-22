@@ -21,9 +21,11 @@ namespace TRAB_IHC
             Thread wm_manager = new Thread(work);
             wm_manager.Start();
 
-            // Start the GUI
+            // Initialize application
             Application.Init();
             MainWindow win = new MainWindow();
+
+            // Run GUI
             win.Show();
             Application.Run();
 

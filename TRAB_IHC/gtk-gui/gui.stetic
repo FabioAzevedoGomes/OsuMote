@@ -6,7 +6,7 @@
   <import>
     <widget-library name="../bin/Debug/TRAB_IHC.exe" internal="true" />
   </import>
-  <widget class="Gtk.Window" id="MainWindow" design-size="576 226">
+  <widget class="Gtk.Window" id="MainWindow" design-size="576 275">
     <action-group name="Default">
       <action id="HelpAction">
         <property name="Type">Action</property>
@@ -205,186 +205,24 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <widget class="Gtk.CheckButton" id="soundCheckbutton">
-                                        <property name="MemberName" />
-                                        <property name="Tooltip">Play a sound through the wiimote speaker when a hit is registered (See below)</property>
-                                        <property name="CanFocus">True</property>
-                                        <property name="Label">Sound</property>
-                                        <property name="DrawIndicator">True</property>
-                                        <property name="HasLabel">True</property>
-                                        <property name="UseUnderline">True</property>
-                                        <signal name="Toggled" handler="ToggleSoundHandler" />
-                                      </widget>
-                                      <packing>
-                                        <property name="Position">1</property>
-                                        <property name="AutoSize">True</property>
-                                        <property name="Expand">False</property>
-                                        <property name="Fill">False</property>
-                                      </packing>
+                                      <placeholder />
                                     </child>
                                   </widget>
                                   <packing>
                                     <property name="Position">0</property>
                                     <property name="AutoSize">True</property>
-                                    <property name="Expand">False</property>
-                                    <property name="Fill">False</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <widget class="Gtk.Frame" id="soundFrame">
+                                  <widget class="Gtk.Image" id="feedbackImage">
                                     <property name="MemberName" />
-                                    <property name="Sensitive">False</property>
-                                    <property name="CanDefault">True</property>
-                                    <property name="HasDefault">True</property>
-                                    <property name="ShadowType">Out</property>
-                                    <property name="BorderWidth">2</property>
-                                    <child>
-                                      <widget class="Gtk.Alignment" id="GtkAlignment2">
-                                        <property name="MemberName" />
-                                        <property name="Xalign">0</property>
-                                        <property name="Yalign">0</property>
-                                        <property name="LeftPadding">12</property>
-                                        <child>
-                                          <widget class="Gtk.VBox" id="vbox5">
-                                            <property name="MemberName" />
-                                            <property name="Homogeneous">True</property>
-                                            <property name="Spacing">6</property>
-                                            <property name="BorderWidth">2</property>
-                                            <child>
-                                              <widget class="Gtk.HBox" id="hbox2">
-                                                <property name="MemberName" />
-                                                <property name="Spacing">6</property>
-                                                <child>
-                                                  <widget class="Gtk.Label" id="centerSoundLabel">
-                                                    <property name="MemberName" />
-                                                    <property name="LabelProp" translatable="yes">Drum Center Hit</property>
-                                                  </widget>
-                                                  <packing>
-                                                    <property name="Position">0</property>
-                                                    <property name="AutoSize">True</property>
-                                                    <property name="Expand">False</property>
-                                                    <property name="Fill">False</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <widget class="Gtk.Button" id="centerListenButton">
-                                                    <property name="MemberName" />
-                                                    <property name="Tooltip">Listen to the sound for a hit in the drum center</property>
-                                                    <property name="CanFocus">True</property>
-                                                    <property name="Type">TextOnly</property>
-                                                    <property name="Label">Listen</property>
-                                                    <property name="UseUnderline">True</property>
-                                                    <signal name="Clicked" handler="CenterListenHandler" />
-                                                  </widget>
-                                                  <packing>
-                                                    <property name="Position">1</property>
-                                                    <property name="AutoSize">True</property>
-                                                    <property name="Expand">False</property>
-                                                    <property name="Fill">False</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <widget class="Gtk.Button" id="centerChooseButton">
-                                                    <property name="MemberName" />
-                                                    <property name="Tooltip">Choose what sound will be played when a center hit is registered</property>
-                                                    <property name="CanFocus">True</property>
-                                                    <property name="Type">TextOnly</property>
-                                                    <property name="Label">Choose</property>
-                                                    <property name="UseUnderline">True</property>
-                                                    <signal name="Clicked" handler="CenterChooseHandler" />
-                                                  </widget>
-                                                  <packing>
-                                                    <property name="Position">2</property>
-                                                    <property name="AutoSize">True</property>
-                                                    <property name="Expand">False</property>
-                                                    <property name="Fill">False</property>
-                                                  </packing>
-                                                </child>
-                                              </widget>
-                                              <packing>
-                                                <property name="Position">0</property>
-                                                <property name="AutoSize">True</property>
-                                                <property name="Expand">False</property>
-                                                <property name="Fill">False</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <widget class="Gtk.HBox" id="hbox3">
-                                                <property name="MemberName" />
-                                                <property name="Spacing">6</property>
-                                                <child>
-                                                  <widget class="Gtk.Label" id="sideSoundLabel">
-                                                    <property name="MemberName" />
-                                                    <property name="LabelProp" translatable="yes">Drum Side Hit</property>
-                                                  </widget>
-                                                  <packing>
-                                                    <property name="Position">0</property>
-                                                    <property name="AutoSize">True</property>
-                                                    <property name="Expand">False</property>
-                                                    <property name="Fill">False</property>
-                                                    <property name="Padding">8</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <widget class="Gtk.Button" id="sidesListenButton">
-                                                    <property name="MemberName" />
-                                                    <property name="Tooltip">Listen to the sound for a hit on drum sides</property>
-                                                    <property name="CanFocus">True</property>
-                                                    <property name="Type">TextOnly</property>
-                                                    <property name="Label">Listen</property>
-                                                    <property name="UseUnderline">True</property>
-                                                    <signal name="Clicked" handler="SideListenHandler" />
-                                                  </widget>
-                                                  <packing>
-                                                    <property name="Position">1</property>
-                                                    <property name="AutoSize">True</property>
-                                                    <property name="Expand">False</property>
-                                                    <property name="Fill">False</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <widget class="Gtk.Button" id="sidesChooseButton">
-                                                    <property name="MemberName" />
-                                                    <property name="Tooltip">Choose what sound will be played when a side hit is registered</property>
-                                                    <property name="CanFocus">True</property>
-                                                    <property name="Type">TextOnly</property>
-                                                    <property name="Label">Choose</property>
-                                                    <property name="UseUnderline">True</property>
-                                                    <signal name="Clicked" handler="SideChooseHandler" />
-                                                  </widget>
-                                                  <packing>
-                                                    <property name="Position">2</property>
-                                                    <property name="AutoSize">True</property>
-                                                    <property name="Expand">False</property>
-                                                    <property name="Fill">False</property>
-                                                  </packing>
-                                                </child>
-                                              </widget>
-                                              <packing>
-                                                <property name="Position">1</property>
-                                                <property name="AutoSize">True</property>
-                                                <property name="Expand">False</property>
-                                                <property name="Fill">False</property>
-                                              </packing>
-                                            </child>
-                                          </widget>
-                                        </child>
-                                      </widget>
-                                    </child>
-                                    <child>
-                                      <widget class="Gtk.Label" id="soundFrameLabel">
-                                        <property name="MemberName" />
-                                        <property name="LabelProp" translatable="yes">&lt;b&gt;Sound Options&lt;/b&gt;</property>
-                                        <property name="UseMarkup">True</property>
-                                      </widget>
-                                      <packing>
-                                        <property name="type">label_item</property>
-                                      </packing>
-                                    </child>
+                                    <property name="Pixbuf">resource:TRAB_IHC.res.TaikoNoInputs.png</property>
                                   </widget>
                                   <packing>
                                     <property name="Position">1</property>
-                                    <property name="AutoSize">False</property>
+                                    <property name="AutoSize">True</property>
+                                    <property name="Expand">False</property>
+                                    <property name="Fill">False</property>
                                   </packing>
                                 </child>
                               </widget>
