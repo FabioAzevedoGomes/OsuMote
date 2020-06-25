@@ -51,7 +51,13 @@ public partial class MainWindow
 
 	private global::Gtk.CheckButton vibrationCheckbutton;
 
+	private global::Gtk.Frame frame1;
+
+	private global::Gtk.Alignment GtkAlignment2;
+
 	private global::Gtk.Image feedbackImage;
+
+	private global::Gtk.Label GtkLabel5;
 
 	private global::Gtk.Label feedbackFrameLabel;
 
@@ -209,14 +215,29 @@ public partial class MainWindow
 		global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.vbox4]));
 		w12.Position = 0;
 		// Container child vbox2.Gtk.Box+BoxChild
+		this.frame1 = new global::Gtk.Frame();
+		this.frame1.Name = "frame1";
+		this.frame1.ShadowType = ((global::Gtk.ShadowType)(1));
+		// Container child frame1.Gtk.Container+ContainerChild
+		this.GtkAlignment2 = new global::Gtk.Alignment(0F, 0F, 1F, 1F);
+		this.GtkAlignment2.Name = "GtkAlignment2";
+		this.GtkAlignment2.LeftPadding = ((uint)(12));
+		// Container child GtkAlignment2.Gtk.Container+ContainerChild
 		this.feedbackImage = new global::Gtk.Image();
 		this.feedbackImage.Name = "feedbackImage";
 		this.feedbackImage.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("TRAB_IHC.res.TaikoNoInputs.png");
-		this.vbox2.Add(this.feedbackImage);
-		global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.feedbackImage]));
-		w13.Position = 1;
-		w13.Expand = false;
-		w13.Fill = false;
+		this.GtkAlignment2.Add(this.feedbackImage);
+		this.frame1.Add(this.GtkAlignment2);
+		this.GtkLabel5 = new global::Gtk.Label();
+		this.GtkLabel5.Name = "GtkLabel5";
+		this.GtkLabel5.LabelProp = global::Mono.Unix.Catalog.GetString("<b>Test</b>");
+		this.GtkLabel5.UseMarkup = true;
+		this.frame1.LabelWidget = this.GtkLabel5;
+		this.vbox2.Add(this.frame1);
+		global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.frame1]));
+		w15.Position = 1;
+		w15.Expand = false;
+		w15.Fill = false;
 		this.GtkAlignment1.Add(this.vbox2);
 		this.feedbackFrame.Add(this.GtkAlignment1);
 		this.feedbackFrameLabel = new global::Gtk.Label();
@@ -226,13 +247,13 @@ public partial class MainWindow
 		this.feedbackFrame.LabelWidget = this.feedbackFrameLabel;
 		this.alignment3.Add(this.feedbackFrame);
 		this.mainWindowSeparationBox.Add(this.alignment3);
-		global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.mainWindowSeparationBox[this.alignment3]));
-		w17.Position = 1;
+		global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.mainWindowSeparationBox[this.alignment3]));
+		w19.Position = 1;
 		this.vbox3.Add(this.mainWindowSeparationBox);
-		global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.mainWindowSeparationBox]));
-		w18.Position = 1;
-		w18.Expand = false;
-		w18.Fill = false;
+		global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.mainWindowSeparationBox]));
+		w20.Position = 1;
+		w20.Expand = false;
+		w20.Fill = false;
 		this.alignment1.Add(this.vbox3);
 		this.Add(this.alignment1);
 		if ((this.Child != null))
@@ -240,11 +261,9 @@ public partial class MainWindow
 			this.Child.ShowAll();
 		}
 		this.DefaultWidth = 576;
-		this.DefaultHeight = 275;
+		this.DefaultHeight = 294;
 		this.Show();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler(this.OnDeleteEvent);
-		this.KeyPressEvent += new global::Gtk.KeyPressEventHandler(this.KeyPressHandler);
-		this.KeyReleaseEvent += new global::Gtk.KeyReleaseEventHandler(this.KeyReleaseHandler);
 		this.ControlsAction.Activated += new global::System.EventHandler(this.OnControlsActionActivated);
 		this.connectButton.Clicked += new global::System.EventHandler(this.ConnectHandler);
 		this.calibrateButton.Clicked += new global::System.EventHandler(this.CalibrateHandler);

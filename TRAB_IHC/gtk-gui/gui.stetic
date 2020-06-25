@@ -6,7 +6,7 @@
   <import>
     <widget-library name="../bin/Debug/TRAB_IHC.exe" internal="true" />
   </import>
-  <widget class="Gtk.Window" id="MainWindow" design-size="576 275">
+  <widget class="Gtk.Window" id="MainWindow" design-size="576 294">
     <action-group name="Default">
       <action id="HelpAction">
         <property name="Type">Action</property>
@@ -214,9 +214,33 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <widget class="Gtk.Image" id="feedbackImage">
+                                  <widget class="Gtk.Frame" id="frame1">
                                     <property name="MemberName" />
-                                    <property name="Pixbuf">resource:TRAB_IHC.res.TaikoNoInputs.png</property>
+                                    <property name="ShadowType">In</property>
+                                    <child>
+                                      <widget class="Gtk.Alignment" id="GtkAlignment2">
+                                        <property name="MemberName" />
+                                        <property name="Xalign">0</property>
+                                        <property name="Yalign">0</property>
+                                        <property name="LeftPadding">12</property>
+                                        <child>
+                                          <widget class="Gtk.Image" id="feedbackImage">
+                                            <property name="MemberName" />
+                                            <property name="Pixbuf">resource:TRAB_IHC.res.TaikoNoInputs.png</property>
+                                          </widget>
+                                        </child>
+                                      </widget>
+                                    </child>
+                                    <child>
+                                      <widget class="Gtk.Label" id="GtkLabel5">
+                                        <property name="MemberName" />
+                                        <property name="LabelProp" translatable="yes">&lt;b&gt;Test&lt;/b&gt;</property>
+                                        <property name="UseMarkup">True</property>
+                                      </widget>
+                                      <packing>
+                                        <property name="type">label_item</property>
+                                      </packing>
+                                    </child>
                                   </widget>
                                   <packing>
                                     <property name="Position">1</property>

@@ -11,3 +11,8 @@
 /home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Debug/res/TaikoLeftCenter.png
 /home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Debug/res/TaikoDoubleSide.png
 /home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Debug/res/TaikoDoubleCenter.png
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Debug/res/DownMvmnt.gif
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Debug/res/ConnectInstruction.png
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Debug/res/CalibrateInstruction.png
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Debug/res/BluetoothError.png
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Debug/res/DisconnectInstruction.png

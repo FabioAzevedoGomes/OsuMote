@@ -125,6 +125,7 @@ namespace ControllerManager
     void DetectMovement(CWiimote &wm)
     {
         int is_pressed_B = wm.Buttons.isHeld(CButtons::BUTTON_B);
+        application_references.b_state = is_pressed_B;
         int significantMovement = 0; // Flag if there was a significant move detected
 	    double solution[3]; // Max angle change rates for each axis
 
@@ -468,25 +469,24 @@ namespace ControllerManager
         application_status.vibration = !application_status.vibration;
     }
 
+    extern "C" bool IsPressedB()
+    {
+        return application_references.b_state;
+    }
+
     extern "C" int  GetLastReadMovement()
     {
-        switch (application_references.last_sent)
+        switch (application_references.last_read)
         {
             case LEFT:
                 return 1;
-            break;
+                break;
             case RIGHT:
                 return 2;
-            break;
+                break;
             case DOWN:
                 return 3;
-            break;
-            case DOUBLE_DOWN:
-                return 4;
-            break;
-            case DOUBLE_SIDE:
-                return 5;
-            break;
+                break;
             default:
                 return 0;
             break;

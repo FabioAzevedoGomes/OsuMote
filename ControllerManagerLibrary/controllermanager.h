@@ -38,6 +38,7 @@ namespace ControllerManager
         directions last_sent; // Last command sent to the game
         char* center_sound; // Path to sound file used in center hit
         char* sides_sound; // Path to sound file used in side hit
+        bool b_state; // State of the B button (true - pressed, false - not pressed)
     };
 
     // Variables relating to the calibration of the wiimote force
@@ -97,6 +98,9 @@ namespace ControllerManager
 
     // Toggles vibration setting on controller hit
     extern "C" void ToggleVibration();
+    
+    // Returns state of the controller's B button
+    extern "C" bool IsPressedB();
     
     /*
     *   Returns last movement that was sent to the game
