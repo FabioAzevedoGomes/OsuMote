@@ -15,6 +15,14 @@ public partial class MainWindow
 
 	private global::Gtk.Action ControlsAction;
 
+	private global::Gtk.Action WiimoteAction;
+
+	private global::Gtk.Action ConnectAction;
+
+	private global::Gtk.Action DisconnectAction;
+
+	private global::Gtk.Action AboutAction;
+
 	private global::Gtk.Alignment alignment1;
 
 	private global::Gtk.VBox vbox3;
@@ -75,12 +83,25 @@ public partial class MainWindow
 		this.HelpAction1 = new global::Gtk.Action("HelpAction1", global::Mono.Unix.Catalog.GetString("Help"), null, null);
 		this.HelpAction1.ShortLabel = global::Mono.Unix.Catalog.GetString("Help");
 		w1.Add(this.HelpAction1, null);
-		this.HelpAction2 = new global::Gtk.Action("HelpAction2", global::Mono.Unix.Catalog.GetString("Help"), null, null);
+		this.HelpAction2 = new global::Gtk.Action("HelpAction2", global::Mono.Unix.Catalog.GetString("_Help"), null, null);
 		this.HelpAction2.ShortLabel = global::Mono.Unix.Catalog.GetString("Help");
 		w1.Add(this.HelpAction2, null);
-		this.ControlsAction = new global::Gtk.Action("ControlsAction", global::Mono.Unix.Catalog.GetString("Controls"), null, null);
+		this.ControlsAction = new global::Gtk.Action("ControlsAction", global::Mono.Unix.Catalog.GetString("_Controls"), null, null);
 		this.ControlsAction.ShortLabel = global::Mono.Unix.Catalog.GetString("Controls");
 		w1.Add(this.ControlsAction, null);
+		this.WiimoteAction = new global::Gtk.Action("WiimoteAction", global::Mono.Unix.Catalog.GetString("_Wiimote"), null, null);
+		this.WiimoteAction.ShortLabel = global::Mono.Unix.Catalog.GetString("Wiimote");
+		w1.Add(this.WiimoteAction, null);
+		this.ConnectAction = new global::Gtk.Action("ConnectAction", global::Mono.Unix.Catalog.GetString("_Connect"), null, null);
+		this.ConnectAction.ShortLabel = global::Mono.Unix.Catalog.GetString("_Connect");
+		w1.Add(this.ConnectAction, null);
+		this.DisconnectAction = new global::Gtk.Action("DisconnectAction", global::Mono.Unix.Catalog.GetString("_Disconnect"), null, null);
+		this.DisconnectAction.Sensitive = false;
+		this.DisconnectAction.ShortLabel = global::Mono.Unix.Catalog.GetString("Disconnect");
+		w1.Add(this.DisconnectAction, null);
+		this.AboutAction = new global::Gtk.Action("AboutAction", global::Mono.Unix.Catalog.GetString("_About"), null, null);
+		this.AboutAction.ShortLabel = global::Mono.Unix.Catalog.GetString("About");
+		w1.Add(this.AboutAction, null);
 		this.UIManager.InsertActionGroup(w1, 0);
 		this.AddAccelGroup(this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -94,8 +115,7 @@ public partial class MainWindow
 		this.vbox3.Name = "vbox3";
 		this.vbox3.Spacing = 6;
 		// Container child vbox3.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString("<ui><menubar name=\'menubar5\'><menu name=\'HelpAction2\' action=\'HelpAction2\'><menui" +
-				"tem name=\'ControlsAction\' action=\'ControlsAction\'/></menu></menubar></ui>");
+		this.UIManager.AddUiFromString(@"<ui><menubar name='menubar5'><menu name='WiimoteAction' action='WiimoteAction'><menuitem name='ConnectAction' action='ConnectAction'/><menuitem name='DisconnectAction' action='DisconnectAction'/></menu><menu name='HelpAction2' action='HelpAction2'><menuitem name='ControlsAction' action='ControlsAction'/><menuitem name='AboutAction' action='AboutAction'/></menu></menubar></ui>");
 		this.menubar5 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget("/menubar5")));
 		this.menubar5.Name = "menubar5";
 		this.vbox3.Add(this.menubar5);
@@ -230,7 +250,7 @@ public partial class MainWindow
 		this.frame1.Add(this.GtkAlignment2);
 		this.GtkLabel5 = new global::Gtk.Label();
 		this.GtkLabel5.Name = "GtkLabel5";
-		this.GtkLabel5.LabelProp = global::Mono.Unix.Catalog.GetString("<b>Test</b>");
+		this.GtkLabel5.LabelProp = global::Mono.Unix.Catalog.GetString("<b>Test your moves here!</b>");
 		this.GtkLabel5.UseMarkup = true;
 		this.frame1.LabelWidget = this.GtkLabel5;
 		this.vbox2.Add(this.frame1);
@@ -261,10 +281,13 @@ public partial class MainWindow
 			this.Child.ShowAll();
 		}
 		this.DefaultWidth = 576;
-		this.DefaultHeight = 294;
+		this.DefaultHeight = 305;
 		this.Show();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler(this.OnDeleteEvent);
 		this.ControlsAction.Activated += new global::System.EventHandler(this.OnControlsActionActivated);
+		this.ConnectAction.Activated += new global::System.EventHandler(this.OnConnectActionActibvated);
+		this.DisconnectAction.Activated += new global::System.EventHandler(this.OnDisconnectActionActivated);
+		this.AboutAction.Activated += new global::System.EventHandler(this.OnAboutActionActivated);
 		this.connectButton.Clicked += new global::System.EventHandler(this.ConnectHandler);
 		this.calibrateButton.Clicked += new global::System.EventHandler(this.CalibrateHandler);
 		this.disconnectButton.Clicked += new global::System.EventHandler(this.DisconnectHandler);

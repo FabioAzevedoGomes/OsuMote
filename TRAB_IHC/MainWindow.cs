@@ -5,16 +5,16 @@ using Gtk;
 
 public partial class MainWindow : Gtk.Window
 {
-    private int connection_status;
+    private int connection_status = -5;
     private static bool exit;
     static int drum_img_state;
 
-    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int  ConnectWiimotes();
-    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int  EnableMotionSensing();
-    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int  DisconnectWiimotes();
+    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int ConnectWiimotes();
+    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int EnableMotionSensing();
+    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int DisconnectWiimotes();
     [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void CalibrateForce(int axis, int turn);
     [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern void ToggleVibration();
-    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int  GetLastReadMovement();
+    [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern int GetLastReadMovement();
     [DllImport("libcontrollermanager.so", CallingConvention = CallingConvention.StdCall)] public static extern bool IsPressedB();
 
     public MainWindow() : base(Gtk.WindowType.Toplevel) => Build();
@@ -25,7 +25,7 @@ public partial class MainWindow : Gtk.Window
         Application.Quit();
         a.RetVal = true;
     }
-    
+
     protected void ConnectHandler(object sender, EventArgs e)
     {
         // Show message to user with instructions on connecting the wiimote
@@ -33,15 +33,28 @@ public partial class MainWindow : Gtk.Window
             "Please put your wiimote in discovery mode.\n\nPress 1 + 2 and press OK, then wait for LED 1 to light up.\n\nThis action will take up to 10 seconds.\n\nPlease make sure that your bluetooth adapter is turned ON.");
         connect_md.Title = "Connect";
         connect_md.Image = new Image("./res/ConnectInstruction.png");
-
         connect_md.ShowAll();
-        int cd_result = connect_md.Run();
+        int cd_result = connect_md.Run(); // Get user selection
         connect_md.Destroy();
 
         if (cd_result == -5) // Dialog OK
         {
-            // Attempt to connect to wiimote
-            connection_status = ConnectWiimotes();
+            // Show message informing user that the wiimote is being searched
+            MessageDialog searching_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.None, "Searching...")
+            {
+                Title = "Searching..."
+            };
+
+            // Start thread to connect to wiimotes
+            Thread connect_manager = new Thread(() => { connection_status = ConnectWiimotes(); });
+            connect_manager.Start();
+
+            // While still attempting to connect
+            while (connection_status == -5)
+            {
+                searching_md.ShowAll();
+            }
+            searching_md.Destroy();
 
             // If connection sucessful
             if (connection_status > 0)
@@ -59,12 +72,21 @@ public partial class MainWindow : Gtk.Window
                 // Enable motion sensing and calibrate the gyroscope
                 int status = EnableMotionSensing();
 
+                // Show success message to user
+                MessageDialog success_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok, 
+                    "Wiimote connected!\n\nYou can now switch to game window and start playing!");
+                success_md.ShowAll();
+                success_md.Run();
+                success_md.Destroy();
+
                 // Enable the calibration and disconnect buttons, as well as the feedback frame
                 // Disable the connect button
                 calibrateButton.Sensitive = true;
                 disconnectButton.Sensitive = true;
                 feedbackFrame.Sensitive = true;
                 connectButton.Sensitive = false;
+                DisconnectAction.Sensitive = true;
+                ConnectAction.Sensitive = false;
 
                 // Spawn a thread to update the graphics for the taiko drum
                 ThreadStart work2 = UpdateDrumGraphic;
@@ -74,7 +96,7 @@ public partial class MainWindow : Gtk.Window
             else
             {
                 // Show message to user informing that no wiimotes were detected / connected
-                MessageDialog error_md = new MessageDialog(this,DialogFlags.DestroyWithParent, MessageType.Error, ButtonsType.Ok, 
+                MessageDialog error_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Error, ButtonsType.Ok,
                     "No wiimotes were detected.\n\nPlease make sure that your bluetooth adapter is turned ON.");
                 error_md.Title = "Connection error";
                 error_md.Image = new Gtk.Image("./res/BluetoothError.png");
@@ -82,6 +104,9 @@ public partial class MainWindow : Gtk.Window
                 error_md.ShowAll();
                 error_md.Run();
                 error_md.Destroy();
+
+                // Reset connected wiimotes to searching
+                connection_status = -5;
             }
         }
     }
@@ -90,92 +115,123 @@ public partial class MainWindow : Gtk.Window
     {
         /* Calibrate the thresholds to user's movements */
 
-        // Image with instructions on how to execute the downward movement
-        Gtk.Image down_mvmnt_img = new Gtk.Image(); //("./res/DownMovement.gif"); // 200 x 150
-        Gtk.Image side_mvmnt_img = new Gtk.Image("./Resources/wiimoteLeftMovement.png"); // 200 x 150
+        int md_result = 0;
 
+        // Image with instructions on how to execute the movements
+        Gtk.Image down_mvmnt_img = new Gtk.Image();
+        Gtk.Image side_mvmnt_img = new Gtk.Image();
         down_mvmnt_img.PixbufAnimation = new Gdk.PixbufAnimation("./res/DownMvmnt.gif");
+        side_mvmnt_img.PixbufAnimation = new Gdk.PixbufAnimation("./res/SideMvmnt.gif");
 
         // Calibrate downward movement
 
         // Show message with instructions for first move
         MessageDialog downfirst_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.OkCancel,
-            "Calibration for down movements will now begin, please press OK and make the movement shown with your controller")
+            "Calibration for down movements will now begin.\n\nPlease press OK and make the movement shown with your controller.")
         {
             Image = down_mvmnt_img
         };
         downfirst_md.ShowAll();
-        downfirst_md.Run();
+        md_result = downfirst_md.Run();
         downfirst_md.Destroy();
 
-        // Record user movements after OK is pressed
-        CalibrateForce(0, 0);
-
-        // Show message with instructions for second move
-        MessageDialog downsecond_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
-            "Very good, now a second time")
+        if (md_result == -5) // Dialog OK
         {
-            Image = down_mvmnt_img
-        };
-        downsecond_md.ShowAll();
-        downsecond_md.Run();
-        downsecond_md.Destroy();
+            // Reset result
+            md_result = 0;
 
-        // Record user movements after OK is pressed 
-        CalibrateForce(0, 1);
+            // Record user movements after OK is pressed
+            CalibrateForce(0, 0);
 
-        // Show message with instructions for third move
-        MessageDialog downthird_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
-            "And lastly a third time")
-        {
-            Image = down_mvmnt_img
-        };
-        downthird_md.ShowAll();
-        downthird_md.Run();
-        downthird_md.Destroy();
+            // Show message with instructions for second move
+            MessageDialog downsecond_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
+                "Very good, now a second time.")
+            {
+                Image = down_mvmnt_img
+            };
+            downsecond_md.ShowAll();
+            md_result = downsecond_md.Run();
+            downsecond_md.Destroy();
 
-        // Record user movements after OK is pressed
-        CalibrateForce(0, 2);
+            if (md_result == -5)
+            {
+                // Reset result
+                md_result = 0;
 
-        // Calibrate sideways movement
+                // Record user movements after OK is pressed 
+                CalibrateForce(0, 1);
 
-        // Show message with instructions for the first move
-        MessageDialog sidefirst_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
-            "Calibration for sideways movements will now begin, please press OK and and make the movement shown with your controller")
-        {
-            Image = side_mvmnt_img
-        };
-        sidefirst_md.ShowAll();
-        sidefirst_md.Run();
-        sidefirst_md.Destroy();
+                // Show message with instructions for third move
+                MessageDialog downthird_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
+                    "And lastly a third time.")
+                {
+                    Image = down_mvmnt_img
+                };
+                downthird_md.ShowAll();
+                md_result = downthird_md.Run();
+                downthird_md.Destroy();
 
-        // Record user movements after OK is pressed
-        CalibrateForce(1, 0);
+                if (md_result == -5)
+                {
+                    // Reset result
+                    md_result = 0;
 
-        MessageDialog sidesecond_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
-         "Very good, now a second time")
-        {
-            Image = side_mvmnt_img
-        };
-        sidesecond_md.ShowAll();
-        sidesecond_md.Run();
-        sidesecond_md.Destroy();
+                    // Record user movements after OK is pressed
+                    CalibrateForce(0, 2);
 
-        // Record user movements affter OK is pressed
-        CalibrateForce(1, 1);
+                    // Calibrate sideways movement
 
-        MessageDialog sidethird_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
-         "And lastly a third time")
-        {
-            Image = side_mvmnt_img
-        };
-        sidethird_md.ShowAll();
-        sidethird_md.Run();
-        sidethird_md.Destroy();
+                    // Show message with instructions for the first move
+                    MessageDialog sidefirst_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
+                        "Calibration for sideways movements will now begin.\n\nPlease press OK and and make the movement shown with your controller.")
+                    {
+                        Image = side_mvmnt_img
+                    };
+                    sidefirst_md.ShowAll();
+                    md_result = sidefirst_md.Run();
+                    sidefirst_md.Destroy();
 
-        // Record user movements after OK is pressed
-        CalibrateForce(1, 2);
+                    if (md_result == -5)
+                    {
+                        // Reset result
+                        md_result = 0;
 
+                        // Record user movements after OK is pressed
+                        CalibrateForce(1, 0);
+
+                        MessageDialog sidesecond_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
+                         "Very good, now a second time.")
+                        {
+                            Image = side_mvmnt_img
+                        };
+                        sidesecond_md.ShowAll();
+                        md_result = sidesecond_md.Run();
+                        sidesecond_md.Destroy();
+
+                        if (md_result == -5)
+                        {
+                            // Record user movements affter OK is pressed
+                            CalibrateForce(1, 1);
+
+                            MessageDialog sidethird_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
+                             "And lastly a third time.")
+                            {
+                                Image = side_mvmnt_img
+                            };
+                            sidethird_md.ShowAll();
+                            md_result = sidethird_md.Run();
+                            sidethird_md.Destroy();
+
+                            if (md_result == -5)
+                            {
+                                // Record user movements after OK is pressed
+                                CalibrateForce(1, 2);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     protected void DisconnectHandler(object sender, EventArgs e)
@@ -205,12 +261,17 @@ public partial class MainWindow : Gtk.Window
                 sucess_md.Run();
                 sucess_md.Destroy();
 
+                // Set connection_status back to initial value
+                connection_status = -5;
+
                 // Disable the calibration and disconnect button, as well as feedback frame
                 // Enable the connect button
                 calibrateButton.Sensitive = false;
                 disconnectButton.Sensitive = false;
                 feedbackFrame.Sensitive = false;
                 connectButton.Sensitive = true;
+                DisconnectAction.Sensitive = false;
+                ConnectAction.Sensitive = true;
 
                 // Kill taiko updater thread and reset the shown image to the No Inputs
                 exit = true;
@@ -232,12 +293,6 @@ public partial class MainWindow : Gtk.Window
     {
         /* Toggle vibration on hit */
         ToggleVibration();
-    }
-
-    protected void OnControlsActionActivated(object sender, EventArgs e)
-    {
-        /* Show available controls to user */
-        // TODO
     }
 
     public void UpdateDrumGraphic()
@@ -296,5 +351,32 @@ public partial class MainWindow : Gtk.Window
                     break;
             }
         }
+    }
+
+    protected void OnConnectActionActibvated(object sender, EventArgs e)
+    {
+        ConnectHandler(sender, e);
+    }
+
+    protected void OnDisconnectActionActivated(object sender, EventArgs e)
+    {
+        DisconnectHandler(sender, e);
+    }
+
+    protected void OnControlsActionActivated(object sender, EventArgs e)
+    {
+        /* TODO Show user available controls */
+    }
+
+    protected void OnAboutActionActivated(object sender, EventArgs e)
+    {
+        MessageDialog about_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
+            "OsuMote Version 1.0\nhttps://github.com/FabioAzevedoGomes/OsuMote\n" +
+            "Made by:\n\n" +
+            "Fábio A. Gomes\n" +
+            "Caetano J. Stradolini\n");
+        about_md.ShowAll();
+        about_md.Run();
+        about_md.Destroy();
     }
 }

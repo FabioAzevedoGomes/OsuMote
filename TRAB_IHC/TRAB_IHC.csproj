@@ -97,13 +97,14 @@
     <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Window.cs" />
-    <Compile Include="gtk-gui\TRAB_IHC.Window.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\Debug\libcontrollermanager.so" />
     <None Include="bin\Debug\libwiicpp.so" />
     <None Include="res\DownMvmnt.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="res\SideMvmnt.gif">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

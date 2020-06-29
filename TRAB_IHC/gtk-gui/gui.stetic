@@ -6,7 +6,7 @@
   <import>
     <widget-library name="../bin/Debug/TRAB_IHC.exe" internal="true" />
   </import>
-  <widget class="Gtk.Window" id="MainWindow" design-size="576 294">
+  <widget class="Gtk.Window" id="MainWindow" design-size="576 305">
     <action-group name="Default">
       <action id="HelpAction">
         <property name="Type">Action</property>
@@ -25,14 +25,38 @@
       </action>
       <action id="HelpAction2">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Help</property>
+        <property name="Label" translatable="yes">_Help</property>
         <property name="ShortLabel" translatable="yes">Help</property>
       </action>
       <action id="ControlsAction">
         <property name="Type">Action</property>
-        <property name="Label" translatable="yes">Controls</property>
+        <property name="Label" translatable="yes">_Controls</property>
         <property name="ShortLabel" translatable="yes">Controls</property>
         <signal name="Activated" handler="OnControlsActionActivated" />
+      </action>
+      <action id="WiimoteAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">_Wiimote</property>
+        <property name="ShortLabel" translatable="yes">Wiimote</property>
+      </action>
+      <action id="ConnectAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">_Connect</property>
+        <property name="ShortLabel" translatable="yes">_Connect</property>
+        <signal name="Activated" handler="OnConnectActionActibvated" />
+      </action>
+      <action id="DisconnectAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">_Disconnect</property>
+        <property name="Sensitive">False</property>
+        <property name="ShortLabel" translatable="yes">Disconnect</property>
+        <signal name="Activated" handler="OnDisconnectActionActivated" />
+      </action>
+      <action id="AboutAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">_About</property>
+        <property name="ShortLabel" translatable="yes">About</property>
+        <signal name="Activated" handler="OnAboutActionActivated" />
       </action>
     </action-group>
     <property name="MemberName" />
@@ -50,8 +74,13 @@
               <widget class="Gtk.MenuBar" id="menubar5">
                 <property name="MemberName" />
                 <node name="__gtksharp_118_Stetic_Editor_ActionMenuBar" type="Menubar">
+                  <node type="Menu" action="WiimoteAction">
+                    <node type="Menuitem" action="ConnectAction" />
+                    <node type="Menuitem" action="DisconnectAction" />
+                  </node>
                   <node type="Menu" action="HelpAction2">
                     <node type="Menuitem" action="ControlsAction" />
+                    <node type="Menuitem" action="AboutAction" />
                   </node>
                 </node>
               </widget>
@@ -234,7 +263,7 @@
                                     <child>
                                       <widget class="Gtk.Label" id="GtkLabel5">
                                         <property name="MemberName" />
-                                        <property name="LabelProp" translatable="yes">&lt;b&gt;Test&lt;/b&gt;</property>
+                                        <property name="LabelProp" translatable="yes">&lt;b&gt;Test your moves here!&lt;/b&gt;</property>
                                         <property name="UseMarkup">True</property>
                                       </widget>
                                       <packing>
@@ -277,52 +306,6 @@
                 <property name="AutoSize">True</property>
                 <property name="Expand">False</property>
                 <property name="Fill">False</property>
-              </packing>
-            </child>
-          </widget>
-        </child>
-      </widget>
-    </child>
-  </widget>
-  <widget class="Gtk.Window" id="TRAB_IHC.Window" design-size="400 300">
-    <property name="MemberName" />
-    <property name="Title" translatable="yes">Window</property>
-    <property name="WindowPosition">CenterOnParent</property>
-    <child>
-      <widget class="Gtk.Alignment" id="alignment1">
-        <property name="MemberName" />
-        <child>
-          <widget class="Gtk.HBox" id="hbox3">
-            <property name="MemberName" />
-            <property name="Spacing">6</property>
-            <child>
-              <widget class="Gtk.Image" id="image2">
-                <property name="MemberName" />
-              </widget>
-              <packing>
-                <property name="Position">0</property>
-                <property name="AutoSize">True</property>
-                <property name="Expand">False</property>
-                <property name="Fill">False</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gtk.VBox" id="vbox2">
-                <property name="MemberName" />
-                <property name="Spacing">6</property>
-                <child>
-                  <placeholder />
-                </child>
-                <child>
-                  <placeholder />
-                </child>
-                <child>
-                  <placeholder />
-                </child>
-              </widget>
-              <packing>
-                <property name="Position">1</property>
-                <property name="AutoSize">True</property>
               </packing>
             </child>
           </widget>
