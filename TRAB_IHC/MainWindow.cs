@@ -365,7 +365,13 @@ public partial class MainWindow : Gtk.Window
 
     protected void OnControlsActionActivated(object sender, EventArgs e)
     {
-        /* TODO Show user available controls */
+        MessageDialog controls_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok, ""); ;
+        controls_md.Title = "Controls";
+        controls_md.Image = new Image("res/ControllerInstructions.png");
+
+        controls_md.ShowAll();
+        controls_md.Run();
+        controls_md.Destroy();
     }
 
     protected void OnAboutActionActivated(object sender, EventArgs e)

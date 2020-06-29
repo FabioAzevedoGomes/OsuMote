@@ -17,3 +17,4 @@
 /home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Debug/res/BluetoothError.png
 /home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Debug/res/DisconnectInstruction.png
 /home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Debug/res/SideMvmnt.gif
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Debug/res/ControllerInstructions.png
