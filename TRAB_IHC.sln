@@ -1,7 +1,7 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TRAB_IHC", "TRAB_IHC\TRAB_IHC.csproj", "{7FA35426-E2F6-4C37-BF93-7A2FBE0DBA86}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OsuMote", "TRAB_IHC\OsuMote.csproj", "{7FA35426-E2F6-4C37-BF93-7A2FBE0DBA86}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

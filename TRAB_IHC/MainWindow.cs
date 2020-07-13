@@ -32,7 +32,7 @@ public partial class MainWindow : Gtk.Window
         MessageDialog connect_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Question, ButtonsType.OkCancel,
             "Please put your wiimote in discovery mode.\n\nPress 1 + 2 and press OK, then wait for LED 1 to light up.\n\nThis action will take up to 10 seconds.\n\nPlease make sure that your bluetooth adapter is turned ON.");
         connect_md.Title = "Connect";
-        connect_md.Image = new Image("./res/ConnectInstruction.png");
+        connect_md.Image = new Image(Gdk.Pixbuf.LoadFromResource("TRAB_IHC.res.ConnectInstruction.png"));
         connect_md.ShowAll();
         int cd_result = connect_md.Run(); // Get user selection
         connect_md.Destroy();
@@ -63,7 +63,7 @@ public partial class MainWindow : Gtk.Window
                 MessageDialog gyro_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
             "Gyroscope calibration will now begin.\n\nPlease place your wiimote face up on a flat surface and press OK.\n\nThis action will take up to 3 seconds.\n\nPlease do not touch or move the wiimote during this process.");
                 gyro_md.Title = "Gyroscope calibration";
-                gyro_md.Image = new Gtk.Image("./res/CalibrateInstruction.png");
+                gyro_md.Image = new Gtk.Image(Gdk.Pixbuf.LoadFromResource("TRAB_IHC.res.CalibrateInstruction.png"));
 
                 gyro_md.ShowAll();
                 gyro_md.Run();
@@ -99,7 +99,7 @@ public partial class MainWindow : Gtk.Window
                 MessageDialog error_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Error, ButtonsType.Ok,
                     "No wiimotes were detected.\n\nPlease make sure that your bluetooth adapter is turned ON.");
                 error_md.Title = "Connection error";
-                error_md.Image = new Gtk.Image("./res/BluetoothError.png");
+                error_md.Image = new Gtk.Image(Gdk.Pixbuf.LoadFromResource("TRAB_IHC.res.BluetoothError.png"));
 
                 error_md.ShowAll();
                 error_md.Run();
@@ -120,8 +120,8 @@ public partial class MainWindow : Gtk.Window
         // Image with instructions on how to execute the movements
         Gtk.Image down_mvmnt_img = new Gtk.Image();
         Gtk.Image side_mvmnt_img = new Gtk.Image();
-        down_mvmnt_img.PixbufAnimation = new Gdk.PixbufAnimation("./res/DownMvmnt.gif");
-        side_mvmnt_img.PixbufAnimation = new Gdk.PixbufAnimation("./res/SideMvmnt.gif");
+        down_mvmnt_img.PixbufAnimation = new Gdk.PixbufAnimation(null,"TRAB_IHC.res.DownMvmnt.gif");
+        side_mvmnt_img.PixbufAnimation = new Gdk.PixbufAnimation(null,"TRAB_IHC.res.SideMvmnt.gif");
 
         // Calibrate downward movement
 
@@ -143,6 +143,8 @@ public partial class MainWindow : Gtk.Window
             // Record user movements after OK is pressed
             CalibrateForce(0, 0);
 
+            down_mvmnt_img.PixbufAnimation = new Gdk.PixbufAnimation(null, "TRAB_IHC.res.DownMvmnt.gif");
+
             // Show message with instructions for second move
             MessageDialog downsecond_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
                 "Very good, now a second time.")
@@ -160,6 +162,8 @@ public partial class MainWindow : Gtk.Window
 
                 // Record user movements after OK is pressed 
                 CalibrateForce(0, 1);
+
+                down_mvmnt_img.PixbufAnimation = new Gdk.PixbufAnimation(null, "TRAB_IHC.res.DownMvmnt.gif");
 
                 // Show message with instructions for third move
                 MessageDialog downthird_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
@@ -199,6 +203,8 @@ public partial class MainWindow : Gtk.Window
                         // Record user movements after OK is pressed
                         CalibrateForce(1, 0);
 
+                        side_mvmnt_img.PixbufAnimation = new Gdk.PixbufAnimation(null, "TRAB_IHC.res.SideMvmnt.gif");
+
                         MessageDialog sidesecond_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
                          "Very good, now a second time.")
                         {
@@ -212,6 +218,8 @@ public partial class MainWindow : Gtk.Window
                         {
                             // Record user movements affter OK is pressed
                             CalibrateForce(1, 1);
+
+                            side_mvmnt_img.PixbufAnimation = new Gdk.PixbufAnimation(null, "TRAB_IHC.res.SideMvmnt.gif");
 
                             MessageDialog sidethird_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok,
                              "And lastly a third time.")
@@ -242,7 +250,7 @@ public partial class MainWindow : Gtk.Window
         MessageDialog disconnect_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Question, ButtonsType.OkCancel,
              "Please hold the power button on your wiimote until LED 1 turns off and press OK.\n\nThis will disconnect the remote safely from your computer.");
         disconnect_md.Title = "Disconnect";
-        disconnect_md.Image = new Gtk.Image("./res/DisconnectInstruction.png");
+        disconnect_md.Image = new Gtk.Image(Gdk.Pixbuf.LoadFromResource("TRAB_IHC.res.DisconnectInstruction.png"));
 
         disconnect_md.ShowAll();
         int dm_result = disconnect_md.Run();
@@ -367,7 +375,7 @@ public partial class MainWindow : Gtk.Window
     {
         MessageDialog controls_md = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok, ""); ;
         controls_md.Title = "Controls";
-        controls_md.Image = new Image("res/ControllerInstructions.png");
+        controls_md.Image = new Image(Gdk.Pixbuf.LoadFromResource("TRAB_IHC.res.ControllerInstructions.png"));
 
         controls_md.ShowAll();
         controls_md.Run();

@@ -4,7 +4,7 @@
     <images-root-path>..</images-root-path>
   </configuration>
   <import>
-    <widget-library name="../bin/Debug/TRAB_IHC.exe" internal="true" />
+    <widget-library name="../bin/Release/TRAB_IHC.exe" internal="true" />
   </import>
   <widget class="Gtk.Window" id="MainWindow" design-size="576 305">
     <action-group name="Default">
