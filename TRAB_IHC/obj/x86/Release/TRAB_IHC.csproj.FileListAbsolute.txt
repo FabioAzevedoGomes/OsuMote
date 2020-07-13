@@ -2,3 +2,17 @@
 /home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/obj/x86/Release/TRAB_IHC.csproj.CoreCompileInputs.cache
 /home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/obj/x86/Release/TRAB_IHC.exe
 /home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/obj/x86/Release/TRAB_IHC.csprojAssemblyReference.cache
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Release/res/TaikoNoInputs.png
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Release/res/TaikoRightSide.png
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Release/res/TaikoRightCenter.png
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Release/res/TaikoLeftSide.png
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Release/res/TaikoLeftCenter.png
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Release/res/TaikoDoubleSide.png
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Release/res/TaikoDoubleCenter.png
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Release/res/ConnectInstruction.png
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Release/res/CalibrateInstruction.png
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Release/res/BluetoothError.png
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Release/res/DisconnectInstruction.png
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Release/res/ControllerInstructions.png
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Release/res/DownMvmnt.gif
+/home/fabio/Desktop/TRAB/TRAB_IHC/TRAB_IHC/bin/Release/res/SideMvmnt.gif
